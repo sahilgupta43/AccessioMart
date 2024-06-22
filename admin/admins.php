@@ -1,71 +1,71 @@
 <?php
-// Include database connection and start session
-include('include/connectdb.php');
+    // Include database connection and start session
+    include('include/connectdb.php');
 
-// Function to fetch all admins from database
-function fetchAdmins($conn) {
-    $selectQuery = "SELECT id, fname, username, password FROM admintbl";
-    $result = $conn->query($selectQuery);
+    // Function to fetch all admins from database
+    function fetchAdmins($conn) {
+        $selectQuery = "SELECT id, fname, username, password FROM admintbl";
+        $result = $conn->query($selectQuery);
 
-    if ($result->num_rows > 0) {
-        return $result->fetch_all(MYSQLI_ASSOC);
-    } else {
-        return [];
+        if ($result->num_rows > 0) {
+            return $result->fetch_all(MYSQLI_ASSOC);
+        } else {
+            return [];
+        }
     }
-}
 
-// Function to add a new admin to the database
-function addAdmin($conn, $fname, $username, $password) {
-    $hashed_password = hash('sha256', $password); // Hash the password for storage
+    // Function to add a new admin to the database
+    function addAdmin($conn, $fname, $username, $password) {
+        $hashed_password = hash('sha256', $password); // Hash the password for storage
 
-    // Prepare and execute insert query
-    $insertQuery = "INSERT INTO admintbl (fname, username, password) VALUES (?, ?, ?)";
-    $stmt = $conn->prepare($insertQuery);
-    $stmt->bind_param("sss", $fname, $username, $hashed_password);
-
-    if ($stmt->execute()) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-// Process AJAX request to delete admin
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
-    if ($_POST['action'] == 'delete_admin' && isset($_POST['adminId']) && is_numeric($_POST['adminId'])) {
-        $adminId = $_POST['adminId'];
-
-        // Delete admin from database
-        $deleteQuery = "DELETE FROM admintbl WHERE id = ?";
-        $stmt = $conn->prepare($deleteQuery);
-        $stmt->bind_param("i", $adminId);
+        // Prepare and execute insert query
+        $insertQuery = "INSERT INTO admintbl (fname, username, password) VALUES (?, ?, ?)";
+        $stmt = $conn->prepare($insertQuery);
+        $stmt->bind_param("sss", $fname, $username, $hashed_password);
 
         if ($stmt->execute()) {
-            echo json_encode(['status' => 'success']);
-            exit;
+            return true;
         } else {
-            echo json_encode(['status' => 'error', 'message' => 'Failed to delete admin']);
-            exit;
-        }
-    } elseif ($_POST['action'] == 'add_admin') {
-        // Validate and sanitize input
-        $fname = $_POST['fname'];
-        $username = $_POST['username'];
-        $password = $_POST['password'];
-
-        // Add new admin to database
-        if (addAdmin($conn, $fname, $username, $password)) {
-            echo json_encode(['status' => 'success']);
-            exit;
-        } else {
-            echo json_encode(['status' => 'error', 'message' => 'Failed to add admin']);
-            exit;
+            return false;
         }
     }
-}
 
-// Fetch all admins
-$admins = fetchAdmins($conn);
+    // Process AJAX request to delete admin
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
+        if ($_POST['action'] == 'delete_admin' && isset($_POST['adminId']) && is_numeric($_POST['adminId'])) {
+            $adminId = $_POST['adminId'];
+
+            // Delete admin from database
+            $deleteQuery = "DELETE FROM admintbl WHERE id = ?";
+            $stmt = $conn->prepare($deleteQuery);
+            $stmt->bind_param("i", $adminId);
+
+            if ($stmt->execute()) {
+                echo json_encode(['status' => 'success']);
+                exit;
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Failed to delete admin']);
+                exit;
+            }
+        } elseif ($_POST['action'] == 'add_admin') {
+            // Validate and sanitize input
+            $fname = $_POST['fname'];
+            $username = $_POST['username'];
+            $password = $_POST['password'];
+
+            // Add new admin to database
+            if (addAdmin($conn, $fname, $username, $password)) {
+                echo json_encode(['status' => 'success']);
+                exit;
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Failed to add admin']);
+                exit;
+            }
+        }
+    }
+
+    // Fetch all admins
+    $admins = fetchAdmins($conn);
 ?>
 
 <!DOCTYPE html>
@@ -76,89 +76,107 @@ $admins = fetchAdmins($conn);
     <title>Admins</title>
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<style>
-        /* styles.css */
+    <style>
+        .main-content {
+            margin-left: 250px; /* Adjust based on your sidebar width */
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+        }
 
-    /* Main content container */
-    .main-content {
-        margin-left: 250px; /* Adjust based on your sidebar width */
-        padding: 20px;
-    }
+        /* Add Admin form styling */
+        .add-admin-form {
+            max-width: 600px;
+            margin: 20px 0;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-    /* Add Admin form styling */
-    .container form {
-        max-width: 600px;
-        margin-bottom: 20px;
-        background: #f9f9f9;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
+        .add-admin-form h3 {
+            margin-bottom: 20px;
+        }
 
-    .container form label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: bold;
-    }
+        .add-admin-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
 
-    .container form input[type="text"],
-    .container form input[type="password"] {
-        width: 100%;
-        padding: 8px;
-        margin-bottom: 15px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-        font-size: 14px;
-    }
+        .add-admin-form input[type="text"],
+        .add-admin-form input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
 
-    .container form button[type="submit"] {
-        background-color: #4CAF50;
-        color: white;
-        padding: 12px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-    }
+        .add-admin-form button[type="submit"] {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
 
-    .container form button[type="submit"]:hover {
-        background-color: #45a049;
-    }
+        .add-admin-form button[type="submit"]:hover {
+            background-color: #218838;
+        }
 
-    /* Admin table styling */
-    .admin-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
+        /* Admin table styling */
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-    .admin-table th,
-    .admin-table td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-    }
+        .admin-table th,
+        .admin-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
 
-    .admin-table th {
-        background-color: #f2f2f2;
-    }
+        .admin-table th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
 
-    .admin-table td:last-child {
-        text-align: center;
-    }
+        .admin-table td {
+            background-color: #f9f9f9;
+        }
 
-    .admin-table a {
-        color: #007bff;
-        text-decoration: none;
-    }
+        .admin-table td:last-child {
+            text-align: center;
+        }
 
-    .admin-table a:hover {
-        text-decoration: underline;
-        color: #0056b3;
-    }
+        .admin-table button.delete-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-</style>    
+        .admin-table button.delete-btn:hover {
+            background-color: #c82333;
+        }
+
+    </style>
 </head>
 <body>
     <div class="sidebar">
@@ -171,7 +189,6 @@ $admins = fetchAdmins($conn);
             <li><a href="categories.php">Categories</a></li>
             <li><a href="admins.php">Admins</a></li>
             <li><a href="orders.php">Orders</a></li>
-            <li><a href="reports.php">Reports</a></li>
             <li><a href="logout.php">Logout</a></li>
         </ul>
     </div>

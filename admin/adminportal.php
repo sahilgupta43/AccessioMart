@@ -1,33 +1,33 @@
 <?php
 
-include('include/connectdb.php');
+    include('include/connectdb.php');
 
-if (!isset($_SESSION['admin_id'])) {
-    header("Location: login.php");
-    exit();
-}
+    if (!isset($_SESSION['admin_id'])) {
+        header("Location: login.php");
+        exit();
+    }
 
-// Fetch total customers
-$totalCustomersQuery = "SELECT COUNT(*) AS total_customers FROM customers";
-$totalCustomersResult = $conn->query($totalCustomersQuery);
-$totalCustomers = $totalCustomersResult->fetch_assoc()['total_customers'];
+    // Fetch total customers
+    $totalCustomersQuery = "SELECT COUNT(*) AS total_customers FROM customers";
+    $totalCustomersResult = $conn->query($totalCustomersQuery);
+    $totalCustomers = $totalCustomersResult->fetch_assoc()['total_customers'];
 
-// Fetch total sales
-$totalSalesQuery = "SELECT SUM(totalprice) AS total_sales FROM orders";
-$totalSalesResult = $conn->query($totalSalesQuery);
-$totalSales = $totalSalesResult->fetch_assoc()['total_sales'];
+    // Fetch total sales
+    $totalSalesQuery = "SELECT SUM(totalprice) AS total_sales FROM orders";
+    $totalSalesResult = $conn->query($totalSalesQuery);
+    $totalSales = $totalSalesResult->fetch_assoc()['total_sales'];
 
-// Fetch total products
-$totalProductsQuery = "SELECT COUNT(*) AS total_products FROM products";
-$totalProductsResult = $conn->query($totalProductsQuery);
-$totalProducts = $totalProductsResult->fetch_assoc()['total_products'];
+    // Fetch total products
+    $totalProductsQuery = "SELECT COUNT(*) AS total_products FROM products";
+    $totalProductsResult = $conn->query($totalProductsQuery);
+    $totalProducts = $totalProductsResult->fetch_assoc()['total_products'];
 
-// Fetch total orders
-$totalOrdersQuery = "SELECT COUNT(*) AS total_orders FROM orders";
-$totalOrdersResult = $conn->query($totalOrdersQuery);
-$totalOrders = $totalOrdersResult->fetch_assoc()['total_orders'];
+    // Fetch total orders
+    $totalOrdersQuery = "SELECT COUNT(*) AS total_orders FROM orders";
+    $totalOrdersResult = $conn->query($totalOrdersQuery);
+    $totalOrders = $totalOrdersResult->fetch_assoc()['total_orders'];
 
-$conn->close();
+    $conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -50,7 +50,6 @@ $conn->close();
             <li><a href="categories.php">Categories</a></li>
             <li><a href="admins.php">Admins</a></li>
             <li><a href="orders.php">Orders</a></li>
-            <li><a href="reports.php">Reports</a></li>
             <li><a href="logout.php">Logout</a></li>
         </ul>
     </div>

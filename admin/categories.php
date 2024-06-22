@@ -1,50 +1,50 @@
 <?php
-// Include database connection and session start
-include('include/connectdb.php');
+    // Include database connection
+    include('include/connectdb.php');
 
-// Process form submission if category is added
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
-    $categoryName = $_POST['categoryName'];
-    $categoryImage = ''; // Placeholder for image handling (if needed)
+    // Process form submission if category is added
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
+        $categoryName = $_POST['categoryName'];
+        $categoryImage = ''; // Placeholder for image handling (if needed)
 
-    // Insert category into database
-    $insertQuery = "INSERT INTO categories (category_name, category_image) VALUES (?, ?)";
-    $stmt = $conn->prepare($insertQuery);
-    $stmt->bind_param("ss", $categoryName, $categoryImage);
+        // Insert category into database
+        $insertQuery = "INSERT INTO categories (category_name, category_image) VALUES (?, ?)";
+        $stmt = $conn->prepare($insertQuery);
+        $stmt->bind_param("ss", $categoryName, $categoryImage);
 
-    if ($stmt->execute()) {
-        // Fetch newly added category ID
-        $newCategoryId = $stmt->insert_id;
-        $stmt->close();
+        if ($stmt->execute()) {
+            // Fetch newly added category ID
+            $newCategoryId = $stmt->insert_id;
+            $stmt->close();
 
-        // Fetch the newly added category details
-        $selectQuery = "SELECT cid, category_name FROM categories WHERE cid = ?";
-        $stmt = $conn->prepare($selectQuery);
-        $stmt->bind_param("i", $newCategoryId);
-        $stmt->execute();
-        $result = $stmt->get_result();
+            // Fetch the newly added category details
+            $selectQuery = "SELECT cid, category_name, category_image FROM categories WHERE cid = ?";
+            $stmt = $conn->prepare($selectQuery);
+            $stmt->bind_param("i", $newCategoryId);
+            $stmt->execute();
+            $result = $stmt->get_result();
 
-        if ($result->num_rows > 0) {
-            $category = $result->fetch_assoc();
-            // JSON response for AJAX
-            echo json_encode(['status' => 'success', 'category' => $category]);
-            exit;
+            if ($result->num_rows > 0) {
+                $category = $result->fetch_assoc();
+                // JSON response for AJAX
+                echo json_encode(['status' => 'success', 'category' => $category]);
+                exit;
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Failed to fetch new category']);
+                exit;
+            }
         } else {
-            echo json_encode(['status' => 'error', 'message' => 'Failed to fetch new category']);
+            echo json_encode(['status' => 'error', 'message' => $stmt->error]);
             exit;
         }
-    } else {
-        echo json_encode(['status' => 'error', 'message' => 'Failed to add category']);
-        exit;
     }
-}
 
-// Fetch all categories from database
-$selectQuery = "SELECT cid, category_name FROM categories";
-$result = $conn->query($selectQuery);
+    // Fetch all categories from database
+    $selectQuery = "SELECT cid, category_name, category_image FROM categories";
+    $result = $conn->query($selectQuery);
 
-// Close database connection
-$conn->close();
+    // Close database connection
+    $conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -54,89 +54,90 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Category</title>
     <link rel="stylesheet" href="css/styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
         .main-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Center aligns content horizontally */
-    justify-content: center; /* Center aligns content vertically */
-    flex-grow: 1;
-    padding: 20px;
-}
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center aligns content horizontally */
+            justify-content: center; /* Center aligns content vertically */
+            flex-grow: 1;
+            padding: 20px;
+        }
 
-.container {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 800px; /* Adjust maximum width as needed */
-    margin-bottom: 20px; /* Space between form and table */
-}
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px; /* Adjust maximum width as needed */
+            margin-bottom: 20px; /* Space between form and table */
+        }
 
-form {
-    display: flex;
-    flex-direction: column;
-}
+        form {
+            display: flex;
+            flex-direction: column;
+        }
 
-label {
-    margin-bottom: 8px;
-    font-weight: bold;
-}
+        label {
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
 
-input[type="text"], input[type="file"], button {
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 100%; /* Ensure inputs and button fill the container */
-    box-sizing: border-box; /* Ensure padding and border are included in width */
-}
+        input[type="text"], input[type="file"], button {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%; /* Ensure inputs and button fill the container */
+            box-sizing: border-box; /* Ensure padding and border are included in width */
+        }
 
-button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 4px;
-}
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
 
-button:hover {
-    background-color: #45a049;
-}
+        button:hover {
+            background-color: #45a049;
+        }
 
-.category-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
+        .category-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
 
-.category-table th, .category-table td {
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
+        .category-table th, .category-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
 
-.category-table th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-}
+        .category-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
 
-.category-table td {
-    vertical-align: middle;
-}
+        .category-table td {
+            vertical-align: middle;
+        }
 
-.category-table td a {
-    color: #007bff;
-    text-decoration: none;
-    margin-right: 10px;
-}
+        .category-table td a {
+            color: #007bff;
+            text-decoration: none;
+            margin-right: 10px;
+        }
 
-.category-table td a:hover {
-    text-decoration: underline;
-    color: #0056b3;
-}
-</style>
+        .category-table td a:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <div class="sidebar">
@@ -149,7 +150,6 @@ button:hover {
             <li><a href="categories.php">Categories</a></li>
             <li><a href="admins.php">Admins</a></li>
             <li><a href="orders.php">Orders</a></li>
-            <li><a href="reports.php">Reports</a></li>
             <li><a href="logout.php">Logout</a></li>
         </ul>
     </div>
@@ -178,85 +178,82 @@ button:hover {
                 </thead>
                 <tbody id="categoryTableBody">
                     <?php
-                    if ($result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
-                            echo "<tr>";
-                            echo "<td>" . $row['cid'] . "</td>";
-                            echo "<td>" . $row['category_name'] . "</td>";
-                            echo "<td><a href='delete-category.php?id=" . $row['cid'] . "' class='delete-category'>Delete</a> | <a href='update-category.php?id=" . $row['cid'] . "'>Update</a></td>";
-                            echo "</tr>";
+                        if ($result->num_rows > 0) {
+                            while ($row = $result->fetch_assoc()) {
+                                echo "<tr>";
+                                echo "<td>" . $row['cid'] . "</td>";
+                                echo "<td>" . $row['category_name'] . "</td>";
+                                echo "<td><a href='categorydelete.php?cid=" . $row['cid'] . "' class='delete-category'>Delete</a></td>";
+                                echo "</tr>";
+                            }
+                        } else {
+                            echo "<tr><td colspan='3'>No categories found.</td></tr>";
                         }
-                    } else {
-                        echo "<tr><td colspan='3'>No categories found.</td></tr>";
-                    }
                     ?>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Add Category Form Submission with AJAX
             $('#addCategoryForm').submit(function(event) {
                 event.preventDefault();
                 var formData = new FormData(this);
 
                 $.ajax({
                     type: 'POST',
-                    url: 'categories.php',
+                    url: 'categoriesinsert.php',
                     data: formData,
                     processData: false,
                     contentType: false,
                     dataType: 'json',
                     success: function(response) {
                         if (response.status === 'success') {
-                            // Append newly added category to table
                             var category = response.category;
                             var newRow = "<tr>" +
                                 "<td>" + category.cid + "</td>" +
                                 "<td>" + category.category_name + "</td>" +
-                                "<td><a href='categorydelete.php?id=" + category.cid + "' class='delete-category'>Delete</a> | <a href='update-category.php?id=" + category.cid + "'>Update</a></td>" +
+                                "<td><a href='categorydelete.php?id=" + category.cid + "' class='delete-category'>Delete</a></td>" +
                                 "</tr>";
                             $('#categoryTableBody').append(newRow);
-
-                            // Reset form fields
-                            $('#addCategoryForm')[0].reset();
+                            alert('Category added successfully.');
                         } else {
-                            alert('Failed to add category.');
+                            alert('Failed to add category: ' + response.message);
                         }
                     },
-                    error: function() {
-                        alert('Failed to add category.');
+                    error: function(xhr, status, error) {
+                        alert('Failed to add category: ' + error);
                     }
                 });
             });
 
-            // Delete Category using AJAX (Example for dynamically added delete link)
+            // Delete category AJAX function
             $(document).on('click', '.delete-category', function(event) {
                 event.preventDefault();
                 var deleteUrl = $(this).attr('href');
 
-                $.ajax({
-                    type: 'GET',
-                    url: deleteUrl,
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.status === 'success') {
-                            // Remove deleted category row from table
-                            $(event.target).closest('tr').remove();
-                            alert('Category deleted successfully.');
-                        } else {
-                            alert('Failed to delete category.');
+                if (confirm("Are you sure you want to delete this category?")) {
+                    $.ajax({
+                        type: 'GET',
+                        url: deleteUrl,
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.status === 'success') {
+                                $(event.target).closest('tr').remove();
+                                alert('Category deleted successfully.');
+                            } else {
+                                alert('Failed to delete category: ' + response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Failed to delete category: ' + error);
                         }
-                    },
-                    error: function() {
-                        alert('Failed to delete category.');
-                    }
-                });
+                    });
+                }
             });
         });
     </script>
+
 </body>
 </html>

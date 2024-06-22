@@ -7,71 +7,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login</title>
     <style>
-        /* Global Reset and Base Styles */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    display: flex;
-    justify-content: center; /* Center aligns content horizontally */
-    align-items: center; /* Center aligns content vertically */
-    height: 100vh; /* Full viewport height */
-}
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+        }
 
-.login-container {
-    background-color: #fff;
-    padding: 40px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px; /* Adjust max-width as needed */
-}
+        .login-container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px; /* Adjust max-width as needed */
+        }
 
-h2 {
-    text-align: center;
-    margin-bottom: 20px;
-}
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-form {
-    display: flex;
-    flex-direction: column;
-}
+        form {
+            display: flex;
+            flex-direction: column;
+        }
 
-label {
-    margin-bottom: 8px;
-    font-weight: bold;
-}
+        label {
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
 
-input[type="text"], input[type="password"] {
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
+        input[type="text"], input[type="password"] {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
 
-button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 4px;
-}
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
 
-button:hover {
-    background-color: #45a049;
-}
+        button:hover {
+            background-color: #45a049;
+        }
 
-.error {
-    color: #f00;
-    text-align: center;
-    margin-top: 10px;
-}
+        .error {
+            color: #f00;
+            text-align: center;
+            margin-top: 10px;
+        }
 
     </style>
 </head>
@@ -119,5 +118,5 @@ button:hover {
     }
     $stmt->close();
     $conn->close();
-}
+    }
 ?>
