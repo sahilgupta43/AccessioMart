@@ -5,78 +5,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup</title>
+    <title>Signin</title>
     <style>
         /* Main content styles */
-main {
-    padding: 20px;
-}
+        main {
+            padding: 20px;
+        }
 
-main h2 {
-    text-align: center;
-}
+        main h2 {
+            text-align: center;
+        }
 
-/* Form styles */
-form {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-    margin: auto;
-}
+        /* Form styles */
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
 
-form label {
-    display: block;
-    margin-bottom: 10px;
-}
+        form label {
+            display: block;
+            margin-bottom: 10px;
+        }
 
-form input[type="text"],
-form input[type="email"],
-form input[type="password"],
-form button {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
+        form input[type="email"],
+        form input[type="password"],
+        form button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
 
-form button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
+        form button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
 
-form button:hover {
-    background-color: #45a049;
-}
+        form button:hover {
+            background-color: #45a049;
+        }
 
-/* Responsive styles */
-@media (max-width: 768px) {
-    form {
-        width: 90%;
-    }
-}
+        /* Error message styles */
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            form {
+                width: 90%;
+            }
+        }
     </style>
 </head>
 <body>
     <main>
-        <!-- Signup form -->
-        <h2>Signup Form</h2>
-        <form action="process_signup.php" method="POST">
+        <!-- Signin form -->
+        <h2>Signin Form</h2>
+        
+        <?php
+        // Display error message if provided in URL parameters
+        if (isset($_GET['error'])) {
+            if ($_GET['error'] == 'not_verified') {
+                echo '<div class="error-message">Your account is not verified. Please verify your email.</div>';
+            } elseif ($_GET['error'] == 'invalid_credentials') {
+                echo '<div class="error-message"></div>';
+            }
+        }
+        ?>
 
+        <form action="process_signin.php" method="POST">
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" placeholder="Enter your email" required>
 
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" placeholder="Enter your password" required>
 
-            <button type="submit" name="signup">SignIn</button>
+            <button type="submit" name="signin">SignIn</button>
             <div>
-                <p>Don't have a account?<a href="signup.php">SignUp</a></p>
+                <p>Don't have an account? <a href="signup.php">SignUp</a></p>
             </div>
         </form>
     </main>

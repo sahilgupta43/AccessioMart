@@ -226,6 +226,7 @@
                         alert('Failed to add category: ' + error);
                     }
                 });
+
             });
 
             // Delete category AJAX function

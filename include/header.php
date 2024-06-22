@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AccessioMart</title>
+    <title>AccessioMart.</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -32,8 +32,8 @@
                 <li><a href="signin.php">Sign In</a></li>
             </ul>
             <div class="icons">
-                <a href="cart.html" class="icon">🛒</a>
-                <a href="wishlist.html" class="icon">❤️</a>
+                <a href="cart.php" class="icon">🛒</a>
+                <a href="wishlist.php" class="icon">❤️</a>
                 <a href="account.html" class="icon">👤</a>
             </div>
             <div class="menu-toggle" id="menu-toggle">

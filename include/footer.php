@@ -41,12 +41,12 @@
                     <li><i class="fa fa-cc-mastercard"></i> MasterCard</li>
                     <li><i class="fa fa-cc-paypal"></i> PayPal</li>
                     <li><i class="fa fa-cc-discover"></i> eSewa</li>
-                    <li><i class="fa fa-university"></i> Bank Transfer</li>
+                    <li><i class="fa fa-cc-visa"></i> Bank Transfer</li>
                 </ul>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 <a href="admin/login.php">AccessioMart</a>. All Rights Reserved.</p>
+            <p>&copy; 2024 <a style="color: #fff" href="admin/login.php">AccessioMart</a>. All Rights Reserved.</p>
         </div>
     </footer>
 

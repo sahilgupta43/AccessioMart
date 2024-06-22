@@ -6,7 +6,7 @@ include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 $selectQuery = "SELECT pid, pname, price, pimage
                 FROM products p
                 INNER JOIN categories c ON p.cid = c.cid
-                WHERE c.category_name = 'laptop'";
+                WHERE c.category_name = 'laptop' LIMIT 3";
 $result = $conn->query($selectQuery);
 
 // Close database connection
@@ -28,7 +28,7 @@ $conn->close();
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <h2 class="section-title">Featured Products - Laptops</h2>
+                <h2 class="section-title">Featured Products</h2>
             </div>
         </div>
         <div id="featured-products" class="row">

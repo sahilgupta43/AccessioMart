@@ -15,6 +15,53 @@ if ($result->num_rows > 0) {
     echo "0 results";
 }
 
+// Start session to persist cart data across pages
+session_start();
+
+// Function to add product to cart
+function addToCart($productId) {
+    if (isset($_SESSION['cart'][$productId])) {
+        $_SESSION['cart'][$productId]['quantity']++;
+    } else {
+        $_SESSION['cart'][$productId] = array(
+            'name' => getProductById($productId)['pname'],
+            'price' => getProductById($productId)['price'],
+            'image' => getProductById($productId)['pimage'],
+            'quantity' => 1,
+        );
+    }
+}
+
+// Function to remove product from cart
+function removeFromCart($productId) {
+    if (isset($_SESSION['cart'][$productId])) {
+        unset($_SESSION['cart'][$productId]);
+    }
+}
+
+// Function to get product details by ID
+function getProductById($productId) {
+    global $products;
+    foreach ($products as $product) {
+        if ($product['pid'] == $productId) {
+            return $product;
+        }
+    }
+    return null;
+}
+
+// Check if 'add_to_cart' parameter is set (simulating a form submission or button click)
+if (isset($_GET['add_to_cart'])) {
+    $productId = $_GET['add_to_cart'];
+    addToCart($productId);
+}
+
+// Check if 'remove_from_cart' parameter is set (simulating a form submission or button click)
+if (isset($_GET['remove_from_cart'])) {
+    $productId = $_GET['remove_from_cart'];
+    removeFromCart($productId);
+}
+
 // Function to add product to wishlist
 function addToWishlist($productId) {
     $_SESSION['wishlist'][$productId] = true;

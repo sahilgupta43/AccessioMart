@@ -7,11 +7,11 @@ body {
 
 a {
     text-decoration: none;
-    color: #ffffff;
+    color: #000000;
 }
 
 a:hover {
-    color: #211124;
+    color: #721717;
 }
 
 /* Header */
@@ -25,7 +25,7 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background-color: #f8f9fa;
+    background-color: #ffffff;
 }
 
 .date-time {
@@ -43,7 +43,7 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 15px 20px;
-    background-color: #343a40;
+    background-color: #000000;
     color: white;
 }
 
@@ -202,7 +202,7 @@ header {
 
 /* Footer */
 footer {
-    background-color: #343a40;
+    background-color: #000000;
     color: white;
     padding: 40px 20px;
     box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
