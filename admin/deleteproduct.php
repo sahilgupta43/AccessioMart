@@ -1,25 +1,19 @@
 <?php
-    // Include database connection
-    include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
+include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 
-    // Check if productId is provided and numeric
-    if (isset($_POST['productId']) && is_numeric($_POST['productId'])) {
-        $productId = $_POST['productId'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $productId = $_POST['productId'];
 
-        // Delete product from database
-        $deleteQuery = "DELETE FROM products WHERE pid = ?";
-        $stmt = $conn->prepare($deleteQuery);
-        $stmt->bind_param("i", $productId);
-        if ($stmt->execute()) {
-            echo json_encode(['status' => 'success']);
-        } else {
-            echo json_encode(['status' => 'error', 'message' => 'Error deleting product.']);
-        }
-        $stmt->close();
+    $deleteQuery = "DELETE FROM products WHERE pid = ?";
+    $stmt = $conn->prepare($deleteQuery);
+    $stmt->bind_param("i", $productId);
+    
+    if ($stmt->execute()) {
+        echo json_encode(['status' => 'success']);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Invalid productId.']);
+        echo json_encode(['status' => 'error', 'message' => 'Error deleting product']);
     }
-
-    // Close database connection
+    $stmt->close();
     $conn->close();
+}
 ?>

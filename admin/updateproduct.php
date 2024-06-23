@@ -1,7 +1,7 @@
 <?php
 include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $productId = $_POST['editProductId'];
     $productName = $_POST['editProductName'];
     $productPrice = $_POST['editProductPrice'];
@@ -9,43 +9,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $categoryId = $_POST['editCategoryId'];
 
     // Handle image upload if provided
-    $productImage = ''; // Initialize empty for now
-    if (isset($_FILES['editProductImage']) && $_FILES['editProductImage']['size'] > 0) {
-        $targetDir = "uploads/";
+    $productImage = $_POST['existingImage'];
+    if (isset($_FILES['editProductImage']) && $_FILES['editProductImage']['error'] == 0) {
+        $targetDir = "uploads/"; // Directory where images will be stored
         $fileName = basename($_FILES['editProductImage']['name']);
         $targetFilePath = $targetDir . $fileName;
+
         if (move_uploaded_file($_FILES['editProductImage']['tmp_name'], $targetFilePath)) {
             $productImage = $targetFilePath;
         } else {
-            echo json_encode(array("status" => "error", "message" => "Failed to upload image."));
-            exit;
+            echo json_encode(['status' => 'error', 'message' => 'Error uploading image']);
+            exit();
         }
     }
 
-    // Update product in database
-    $updateQuery = "UPDATE products SET pname=?, pimage=?, price=?, description=?, cid=? WHERE pid=?";
+    $updateQuery = "UPDATE products SET pname = ?, pimage = ?, price = ?, description = ?, cid = ? WHERE pid = ?";
     $stmt = $conn->prepare($updateQuery);
     $stmt->bind_param("ssdsii", $productName, $productImage, $productPrice, $productDescription, $categoryId, $productId);
+    
     if ($stmt->execute()) {
-        $stmt->close();
-
-        // Fetch updated product details
-        $selectUpdatedQuery = "SELECT pid, pname, pimage, price, description, category_name FROM products p JOIN categories c ON p.cid = c.cid WHERE pid=?";
-        $stmt = $conn->prepare($selectUpdatedQuery);
-        $stmt->bind_param("i", $productId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $product = $result->fetch_assoc();
-        $stmt->close();
-
-        echo json_encode(array("status" => "success", "product" => $product));
-        exit;
+        echo json_encode(['status' => 'success', 'product' => [
+            'pid' => $productId,
+            'pname' => $productName,
+            'pimage' => $productImage,
+            'price' => $productPrice,
+            'description' => $productDescription,
+            'cid' => $categoryId
+        ]]);
     } else {
-        echo json_encode(array("status" => "error", "message" => "Failed to update product."));
-        exit;
+        echo json_encode(['status' => 'error', 'message' => 'Error updating product']);
     }
+    $stmt->close();
+    $conn->close();
 }
-
-// Close database connection
-$conn->close();
 ?>

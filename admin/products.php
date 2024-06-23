@@ -5,6 +5,10 @@
     $categoriesQuery = "SELECT cid, category_name FROM categories";
     $categoriesResult = $conn->query($categoriesQuery);
 
+    if (!$categoriesResult) {
+        die("Query failed: " . $conn->error);
+    }
+
     // Process form submission if product is added
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
         $productName = $_POST['productName'];
@@ -14,7 +18,7 @@
 
         // Handle image upload if provided
         $productImage = ''; // Initialize empty for now
-        if (isset($_FILES['productImage'])) {
+        if (isset($_FILES['productImage']) && $_FILES['productImage']['error'] == 0) {
             $targetDir = "uploads/"; // Directory where images will be stored
             $fileName = basename($_FILES['productImage']['name']);
             $targetFilePath = $targetDir . $fileName;
@@ -44,8 +48,12 @@
         }
     }
 
-    $selectQuery = "SELECT pid, pname, pimage, price, description, category_name FROM products p JOIN categories c ON p.cid = c.cid";
+    $selectQuery = "SELECT pid, pname, pimage, price, description, category_name, p.cid FROM products p JOIN categories c ON p.cid = c.cid";
     $result = $conn->query($selectQuery);
+
+    if (!$result) {
+        die("Query failed: " . $conn->error);
+    }
 
     $conn->close();
 ?>
@@ -186,7 +194,10 @@
                     <?php
                     if ($categoriesResult->num_rows > 0) {
                         while ($row = $categoriesResult->fetch_assoc()) {
-                            echo "<option value='" . $row['cid'] . "'>" . $row['category_name'] . "</option>";
+                            $cid = isset($row['cid']) ? $row['cid'] : null;
+                            if ($cid !== null) {
+                                echo "<option value='" . htmlspecialchars($cid, ENT_QUOTES) . "'>" . htmlspecialchars($row['category_name'], ENT_QUOTES) . "</option>";
+                            }
                         }
                     }
                     ?>
@@ -214,13 +225,15 @@
                             while ($row = $result->fetch_assoc()) {
                                 echo "<tr id='product-row-" . $row['pid'] . "'>";
                                 echo "<td>" . $row['pid'] . "</td>";
-                                echo "<td>" . $row['pname'] . "</td>";
-                                echo "<td><img src='" . $row['pimage'] . "' alt='Product Image' style='max-width: 100px;'></td>";
-                                echo "<td>" . $row['description'] . "</td>";
-                                echo "<td>" . $row['category_name'] . "</td>";
+                                echo "<td>" . htmlspecialchars($row['pname'], ENT_QUOTES) . "</td>";
+                                echo "<td><img src='" . htmlspecialchars($row['pimage'], ENT_QUOTES) . "' alt='Product Image' style='max-width: 100px;'></td>";
+                                echo "<td>" . htmlspecialchars($row['description'], ENT_QUOTES) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['category_name'], ENT_QUOTES) . "</td>";
                                 echo "<td>$" . number_format($row['price'], 2) . "</td>";
                                 echo "<td>";
-                                echo "<td><button onclick=\"openEditModal('" . $row['pid'] . "', '" . htmlspecialchars($row['pname'], ENT_QUOTES) . "', '" . htmlspecialchars($row['pimage'], ENT_QUOTES) . "', '" . $row['price'] . "', '" . htmlspecialchars($row['description'], ENT_QUOTES) . "', '" . $row['cid'] . "')\">Update</button></td>";
+                                if (isset($row['cid'])) {
+                                    echo "<button onclick=\"openEditModal('" . $row['pid'] . "', '" . htmlspecialchars($row['pname'], ENT_QUOTES) . "', '" . htmlspecialchars($row['pimage'], ENT_QUOTES) . "', '" . $row['price'] . "', '" . htmlspecialchars($row['description'], ENT_QUOTES) . "', '" . $row['cid'] . "')\">Update</button>";
+                                }
                                 echo "<button onclick='deleteProduct(" . $row['pid'] . ")'>Delete</button>";
                                 echo "</td>";
                                 echo "</tr>";
@@ -257,10 +270,10 @@
                 <select id="editCategoryId" name="editCategoryId" required>
                     <option value="">Select Category</option>
                     <?php
-                        // Use the same categories data fetched earlier to populate options
+                        $categoriesResult = $conn->query($categoriesQuery);
                         if ($categoriesResult->num_rows > 0) {
                             while ($row = $categoriesResult->fetch_assoc()) {
-                                echo "<option value='" . $row['cid'] . "'>" . $row['category_name'] . "</option>";
+                                echo "<option value='" . htmlspecialchars($row['cid'], ENT_QUOTES) . "'>" . htmlspecialchars($row['category_name'], ENT_QUOTES) . "</option>";
                             }
                         }
                     ?>
@@ -325,31 +338,32 @@
                 // Update other cells as needed (image, description, category, price)
             }
         }
-            function deleteProduct(productId) {
-                if (confirm("Are you sure you want to delete this product?")) {
-                    // Send AJAX request
-                    var xhr = new XMLHttpRequest();
-                    xhr.open("POST", "deleteproduct.php", true);
-                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                    xhr.onreadystatechange = function() {
-                        if (xhr.readyState === 4 && xhr.status === 200) {
-                            var response = JSON.parse(xhr.responseText);
-                            if (response.status === 'success') {
-                                alert("Product deleted successfully.");
 
-                                // Remove the deleted row from the table
-                                var row = document.getElementById("product-row-" + productId);
-                                if (row) {
-                                    row.parentNode.removeChild(row);
-                                }
-                            } else {
-                                alert("Error deleting product: " + response.message);
+        function deleteProduct(productId) {
+            if (confirm("Are you sure you want to delete this product?")) {
+                // Send AJAX request
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "deleteproduct.php", true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response.status === 'success') {
+                            alert("Product deleted successfully.");
+
+                            // Remove the deleted row from the table
+                            var row = document.getElementById("product-row-" + productId);
+                            if (row) {
+                                row.parentNode.removeChild(row);
                             }
+                        } else {
+                            alert("Error deleting product: " + response.message);
                         }
-                    };
-                    xhr.send("productId=" + encodeURIComponent(productId));
-                }
+                    }
+                };
+                xhr.send("productId=" + encodeURIComponent(productId));
             }
+        }
     </script>
 
 </body>
