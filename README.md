@@ -5,12 +5,12 @@ This is our college project. We are a team of two members, Sahil Kumar Gupta and
 ## About Us
 
 ### Sahil Kumar Gupta
-- **LinkedIn**: [Sahil Kumar Gupta](https://www.linkedin.com/in/sahil-gupta-44294b2b2/)
-- **GitHub**: [SahilKumarGupta](https://github.com/sahilgupta43)
+- **LinkedIn**: [Sahil Gupta](https://www.linkedin.com/in/sahil-gupta-44294b2b2/)
+- **GitHub**: [Sahil Gupta](https://github.com/sahilgupta43)
 
 ### Aayush Parajuli
 - **LinkedIn**: [Aayush Parajuli](https://www.linkedin.com/in/aayush-parajuli-232ba3317/)
-- **GitHub**: [AayushParajuli](https://github.com/Aayush-Parajuli-lab)
+- **GitHub**: [Aayush Parajuli](https://github.com/Aayush-Parajuli-lab)
 
 ## Project Overview
 
