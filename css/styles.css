@@ -286,7 +286,7 @@ footer h2 a:hover {
 #contact-form,
 #contact-map,
 #contact-address {
-    flex: 0 1 100%;
+    flex: 0 1 47%;
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
