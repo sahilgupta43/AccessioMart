@@ -1,6 +1,6 @@
 <?php
 // Include database connection
-include('D:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
+include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 
 // Check if productId is provided and numeric
 if (isset($_POST['productId']) && is_numeric($_POST['productId'])) {

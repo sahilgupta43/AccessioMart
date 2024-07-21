@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 include('include/header.php');
 // SQL query to select user data
