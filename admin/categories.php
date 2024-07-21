@@ -197,63 +197,64 @@
 
     <script>
         $(document).ready(function() {
-            $('#addCategoryForm').submit(function(event) {
-                event.preventDefault();
-                var formData = new FormData(this);
+    $('#addCategoryForm').submit(function(event) {
+        event.preventDefault();
+        var formData = new FormData(this);
 
-                $.ajax({
-                    type: 'POST',
-                    url: 'categoriesinsert.php',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.status === 'success') {
-                            var category = response.category;
-                            var newRow = "<tr>" +
-                                "<td>" + category.cid + "</td>" +
-                                "<td>" + category.category_name + "</td>" +
-                                "<td><a href='categorydelete.php?id=" + category.cid + "' class='delete-category'>Delete</a></td>" +
-                                "</tr>";
-                            $('#categoryTableBody').append(newRow);
-                            alert('Category added successfully.');
-                        } else {
-                            alert('Failed to add category: ' + response.message);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        alert('Failed to add category: ' + error);
+        $.ajax({
+            type: 'POST',
+            url: 'categoriesinsert.php',
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function(response) {
+                if (response.status === 'success') {
+                    var category = response.category;
+                    var newRow = "<tr>" +
+                        "<td>" + category.cid + "</td>" +
+                        "<td>" + category.category_name + "</td>" +
+                        "<td><a href='categorydelete.php?cid=" + category.cid + "' class='delete-category'>Delete</a></td>" +
+                        "</tr>";
+                    $('#categoryTableBody').append(newRow);
+                    alert('Category added successfully.');
+                } else {
+                    alert('Failed to add category: ' + response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log('Server response:', xhr.responseText);
+                alert('Failed to add category: ' + error);
+            }
+        });
+    });
+
+    $(document).on('click', '.delete-category', function(event) {
+        event.preventDefault();
+        var deleteUrl = $(this).attr('href');
+
+        if (confirm("Are you sure you want to delete this category?")) {
+            $.ajax({
+                type: 'GET',
+                url: deleteUrl,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        $(event.target).closest('tr').remove();
+                        alert('Category deleted successfully.');
+                    } else {
+                        alert('Failed to delete category: ' + response.message);
                     }
-                });
-
-            });
-
-            // Delete category AJAX function
-            $(document).on('click', '.delete-category', function(event) {
-                event.preventDefault();
-                var deleteUrl = $(this).attr('href');
-
-                if (confirm("Are you sure you want to delete this category?")) {
-                    $.ajax({
-                        type: 'GET',
-                        url: deleteUrl,
-                        dataType: 'json',
-                        success: function(response) {
-                            if (response.status === 'success') {
-                                $(event.target).closest('tr').remove();
-                                alert('Category deleted successfully.');
-                            } else {
-                                alert('Failed to delete category: ' + response.message);
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            alert('Failed to delete category: ' + error);
-                        }
-                    });
+                },
+                error: function(xhr, status, error) {
+                    console.log('Server response:', xhr.responseText);
+                    alert('Failed to delete category: ' + error);
                 }
             });
-        });
+        }
+    });
+});
+
     </script>
 
 </body>
