@@ -31,7 +31,7 @@
         </div>
         <div id="contact-address">
             <h3>Visit Us</h3>
-            <p>123 Example Street, <br>City Name, State, <br>Country - ZIP Code</p>
+            <p>Wotu, MahaBouddha, <br>Kathmandu, Bagmati, <br>Nepal - 44600</p>
         </div>
     </div>
 
