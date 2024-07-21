@@ -1,50 +1,91 @@
 <?php
-    // Include database connection
-    include('include/connectdb.php');
+// Include database connection
+include('include/connectdb.php');
 
-    // Process form submission if category is added
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
-        $categoryName = $_POST['categoryName'];
-        $categoryImage = ''; // Placeholder for image handling (if needed)
+// Process form submission if category is added
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
+    $categoryName = trim($_POST['categoryName']);
+    $categoryImage = ''; // Placeholder for image handling
 
-        // Insert category into database
-        $insertQuery = "INSERT INTO categories (category_name, category_image) VALUES (?, ?)";
-        $stmt = $conn->prepare($insertQuery);
-        $stmt->bind_param("ss", $categoryName, $categoryImage);
+    // Handle image upload
+    if (isset($_FILES['categoryImage']) && $_FILES['categoryImage']['error'] == 0) {
+        $targetDir = "uploads/categories/"; // Set your desired upload directory
+        $targetFile = $targetDir . basename($_FILES["categoryImage"]["name"]);
+        $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
 
-        if ($stmt->execute()) {
-            // Fetch newly added category ID
-            $newCategoryId = $stmt->insert_id;
-            $stmt->close();
+        // Check if image file is an actual image or fake image
+        $check = getimagesize($_FILES["categoryImage"]["tmp_name"]);
+        if ($check === false) {
+            echo json_encode(['status' => 'error', 'message' => 'File is not an image']);
+            exit;
+        }
 
-            // Fetch the newly added category details
-            $selectQuery = "SELECT cid, category_name, category_image FROM categories WHERE cid = ?";
-            $stmt = $conn->prepare($selectQuery);
-            $stmt->bind_param("i", $newCategoryId);
-            $stmt->execute();
-            $result = $stmt->get_result();
+        // Check file size (e.g., limit to 2MB)
+        if ($_FILES["categoryImage"]["size"] > 2000000) {
+            echo json_encode(['status' => 'error', 'message' => 'Sorry, your file is too large']);
+            exit;
+        }
 
-            if ($result->num_rows > 0) {
-                $category = $result->fetch_assoc();
-                // JSON response for AJAX
-                echo json_encode(['status' => 'success', 'category' => $category]);
-                exit;
-            } else {
-                echo json_encode(['status' => 'error', 'message' => 'Failed to fetch new category']);
-                exit;
-            }
+        // Allow certain file formats
+        $allowedFormats = ['jpg', 'jpeg', 'png', 'gif'];
+        if (!in_array($imageFileType, $allowedFormats)) {
+            echo json_encode(['status' => 'error', 'message' => 'Sorry, only JPG, JPEG, PNG & GIF files are allowed']);
+            exit;
+        }
+
+        // Check if file already exists
+        if (file_exists($targetFile)) {
+            echo json_encode(['status' => 'error', 'message' => 'Sorry, file already exists']);
+            exit;
+        }
+
+        // Try to upload file
+        if (move_uploaded_file($_FILES["categoryImage"]["tmp_name"], $targetFile)) {
+            $categoryImage = $targetFile; // Set the file path to save in the database
         } else {
-            echo json_encode(['status' => 'error', 'message' => $stmt->error]);
+            echo json_encode(['status' => 'error', 'message' => 'Sorry, there was an error uploading your file']);
             exit;
         }
     }
 
-    // Fetch all categories from database
-    $selectQuery = "SELECT cid, category_name, category_image FROM categories";
-    $result = $conn->query($selectQuery);
+    // Insert category into database
+    $insertQuery = "INSERT INTO categories (category_name, category_image) VALUES (?, ?)";
+    $stmt = $conn->prepare($insertQuery);
+    $stmt->bind_param("ss", $categoryName, $categoryImage);
 
-    // Close database connection
-    $conn->close();
+    if ($stmt->execute()) {
+        // Fetch newly added category ID
+        $newCategoryId = $stmt->insert_id;
+        $stmt->close();
+
+        // Fetch the newly added category details
+        $selectQuery = "SELECT cid, category_name, category_image FROM categories WHERE cid = ?";
+        $stmt = $conn->prepare($selectQuery);
+        $stmt->bind_param("i", $newCategoryId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $category = $result->fetch_assoc();
+            // JSON response for AJAX
+            echo json_encode(['status' => 'success', 'category' => $category]);
+            exit;
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Failed to fetch new category']);
+            exit;
+        }
+    } else {
+        echo json_encode(['status' => 'error', 'message' => $stmt->error]);
+        exit;
+    }
+}
+
+// Fetch all categories from database
+$selectQuery = "SELECT cid, category_name, category_image FROM categories";
+$result = $conn->query($selectQuery);
+
+// Close database connection
+$conn->close();
 ?>
 
 <!DOCTYPE html>

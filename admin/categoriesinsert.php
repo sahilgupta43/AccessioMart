@@ -11,8 +11,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    // Placeholder for image handling (if needed)
-    $categoryImage = ''; // You may handle file uploads here if required
+    // Handle image upload
+    $categoryImage = '';
+    if (isset($_FILES['categoryImage']) && $_FILES['categoryImage']['error'] == 0) {
+        $targetDir = "uploads/categories/"; // Set your desired upload directory
+        $targetFile = $targetDir . basename($_FILES["categoryImage"]["name"]);
+        $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+
+        // Check if image file is an actual image or fake image
+        $check = getimagesize($_FILES["categoryImage"]["tmp_name"]);
+        if ($check === false) {
+            echo json_encode(['status' => 'error', 'message' => 'File is not an image']);
+            exit;
+        }
+
+        // Check file size (e.g., limit to 2MB)
+        if ($_FILES["categoryImage"]["size"] > 2000000) {
+            echo json_encode(['status' => 'error', 'message' => 'Sorry, your file is too large']);
+            exit;
+        }
+
+        // Allow certain file formats
+        $allowedFormats = ['jpg', 'jpeg', 'png', 'gif'];
+        if (!in_array($imageFileType, $allowedFormats)) {
+            echo json_encode(['status' => 'error', 'message' => 'Sorry, only JPG, JPEG, PNG & GIF files are allowed']);
+            exit;
+        }
+
+        // Check if file already exists
+        if (file_exists($targetFile)) {
+            echo json_encode(['status' => 'error', 'message' => 'Sorry, file already exists']);
+            exit;
+        }
+
+        // Try to upload file
+        if (move_uploaded_file($_FILES["categoryImage"]["tmp_name"], $targetFile)) {
+            $categoryImage = $targetFile; // Set the file path to save in the database
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Sorry, there was an error uploading your file']);
+            exit;
+        }
+    }
 
     // Insert category into database
     $insertQuery = "INSERT INTO categories (category_name, category_image) VALUES (?, ?)";
