@@ -1,6 +1,6 @@
 <?php
 // Include your database connection file
-include('D:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
+include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

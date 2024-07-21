@@ -1,6 +1,6 @@
 <?php
 // Include database connection
-include('D:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
+include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 
 // Start session to persist cart and wishlist data across pages
 

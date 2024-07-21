@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('D:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
+include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 include('include/header.php');
 
 // Fetch products from the database to display details in the wishlist

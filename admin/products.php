@@ -1,5 +1,5 @@
 <?php
-include('D:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
+include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 
 // Fetch all categories from the database for the dropdown
 $categoriesQuery = "SELECT cid, category_name FROM categories";

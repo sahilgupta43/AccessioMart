@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('D:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
+include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 
 if (isset($_GET['oid']) && isset($_GET['amt']) && isset($_GET['refId'])) {
     $orderId = $_GET['oid'];

@@ -1,5 +1,5 @@
 <?php
-include('D:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
+include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $productId = $_POST['editProductId'];

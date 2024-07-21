@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('D:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
+include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 include('include/header.php');
 // SQL query to select user data
 $sql = "SELECT userid, name, email, phone FROM customers WHERE userid = 1";

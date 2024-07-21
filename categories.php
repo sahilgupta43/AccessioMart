@@ -1,6 +1,6 @@
 <?php
 // Include database connection and header
-include('D:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
+include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 include('include/header.php');
 
 // SQL query to fetch categories
