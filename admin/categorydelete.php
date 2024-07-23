@@ -1,25 +1,25 @@
 <?php
-    include('include/connectdb.php');
+include('include/connectdb.php');
 
-    if (isset($_GET['cid'])) {
-        $cid = intval($_GET['cid']);
+// Process delete request
+if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['cid'])) {
+    $categoryId = intval($_GET['cid']);
 
-        // Prepare and execute the delete query
-        $deleteQuery = "DELETE FROM categories WHERE cid = ?";
-        $stmt = $conn->prepare($deleteQuery);
-        $stmt->bind_param("i", $cid);
+    // Delete category from database
+    $deleteQuery = "DELETE FROM categories WHERE cid = ?";
+    $stmt = $conn->prepare($deleteQuery);
+    $stmt->bind_param("i", $categoryId);
 
-        if ($stmt->execute()) {
-            // Return success response in JSON format
-            echo json_encode(['status' => 'success']);
-        } else {
-            // Return error response in JSON format
-            echo json_encode(['status' => 'error', 'message' => $stmt->error]);
-        }
-
+    if ($stmt->execute()) {
         $stmt->close();
-        $conn->close();
+        echo json_encode(['status' => 'success', 'message' => 'Category deleted successfully']);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Invalid category ID']);
+        echo json_encode(['status' => 'error', 'message' => 'Failed to delete category: ' . $stmt->error]);
     }
+
+    $conn->close();
+    exit;
+}
+
+echo json_encode(['status' => 'error', 'message' => 'Invalid request']);
 ?>

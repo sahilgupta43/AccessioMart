@@ -5,18 +5,19 @@ include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 $categoriesQuery = "SELECT cid, category_name FROM categories";
 $categoriesResult = $conn->query($categoriesQuery);
 
-// Process form submission if a product is added
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
-    $productName = $_POST['productName'];
-    $productPrice = $_POST['productPrice'];
-    $productDescription = $_POST['productDescription'];
-    $categoryId = $_POST['categoryId'];
+// Process form submission if a product is updated
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
+    $productId = $_POST['editProductId'];
+    $productName = $_POST['editProductName'];
+    $productPrice = $_POST['editProductPrice'];
+    $productDescription = $_POST['editProductDescription'];
+    $categoryId = $_POST['editCategoryId'];
 
-    // Handle image upload if provided
+    // Check if a new image is uploaded
     $productImage = ''; // Initialize empty for now
-    if (isset($_FILES['productImage']) && $_FILES['productImage']['error'] == UPLOAD_ERR_OK) {
+    if (isset($_FILES['editProductImage']) && $_FILES['editProductImage']['error'] == UPLOAD_ERR_OK) {
         $targetDir = "uploads/"; // Directory where images will be stored
-        $fileName = basename($_FILES['productImage']['name']);
+        $fileName = basename($_FILES['editProductImage']['name']);
         $targetFilePath = $targetDir . $fileName;
 
         // Check if uploads directory exists, if not create it
@@ -24,16 +25,87 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
             mkdir($targetDir, 0777, true);
         }
 
-        if (move_uploaded_file($_FILES['productImage']['tmp_name'], $targetFilePath)) {
+        if (move_uploaded_file($_FILES['editProductImage']['tmp_name'], $targetFilePath)) {
+            $productImage = $targetFilePath;
+        } else {
+            echo "Sorry, there was an error uploading your file.";
+        }
+    } else {
+        // If no new image is uploaded, retain the existing image
+        $existingProductQuery = "SELECT pimage FROM products WHERE pid = ?";
+        $stmt = $conn->prepare($existingProductQuery);
+        $stmt->bind_param("i", $productId);
+        $stmt->execute();
+        $stmt->bind_result($existingImage);
+        $stmt->fetch();
+        $stmt->close();
+        $productImage = $existingImage;
+    }
+
+    // Update query
+    if ($productImage) {
+        // If a new image is uploaded
+        $updateQuery = "UPDATE products SET pname = ?, pimage = ?, price = ?, description = ?, cid = ? WHERE pid = ?";
+        $stmt = $conn->prepare($updateQuery);
+        $stmt->bind_param("ssdssi", $productName, $productImage, $productPrice, $productDescription, $categoryId, $productId);
+    } else {
+        // If no new image is uploaded
+        $updateQuery = "UPDATE products SET pname = ?, price = ?, description = ?, cid = ? WHERE pid = ?";
+        $stmt = $conn->prepare($updateQuery);
+        $stmt->bind_param("ssdsi", $productName, $productPrice, $productDescription, $categoryId, $productId);
+    }
+
+    if ($stmt->execute()) {
+        $stmt->close();
+        // Redirect to products.php to prevent form resubmission on refresh
+        header("Location: products.php");
+        exit();
+    } else {
+        echo "Error: " . $stmt->error;
+    }
+}
+
+
+// Process form submission if a product is updated
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
+    $productId = $_POST['editProductId'];
+    $productName = $_POST['editProductName'];
+    $productPrice = $_POST['editProductPrice'];
+    $productDescription = $_POST['editProductDescription'];
+    $categoryId = $_POST['editCategoryId'];
+
+    // Handle image upload if provided
+    $productImage = ''; // Initialize empty for now
+    if (isset($_FILES['editProductImage']) && $_FILES['editProductImage']['error'] == UPLOAD_ERR_OK) {
+        $targetDir = "uploads/"; // Directory where images will be stored
+        $fileName = basename($_FILES['editProductImage']['name']);
+        $targetFilePath = $targetDir . $fileName;
+
+        // Check if uploads directory exists, if not create it
+        if (!is_dir($targetDir)) {
+            mkdir($targetDir, 0777, true);
+        }
+
+        if (move_uploaded_file($_FILES['editProductImage']['tmp_name'], $targetFilePath)) {
             $productImage = $targetFilePath;
         } else {
             echo "Sorry, there was an error uploading your file.";
         }
     }
 
-    $insertQuery = "INSERT INTO products (pname, pimage, price, description, cid) VALUES (?, ?, ?, ?, ?)";
-    $stmt = $conn->prepare($insertQuery);
-    $stmt->bind_param("ssdsi", $productName, $productImage, $productPrice, $productDescription, $categoryId);
+    // Update query
+    if ($productImage) {
+        // If a new image is uploaded
+        $updateQuery = "UPDATE products SET pname = ?, pimage = ?, price = ?, description = ?, cid = ? WHERE pid = ?";
+        $stmt = $conn->prepare($updateQuery);
+        $stmt->bind_param("ssdssi", $productName, $productImage, $productPrice, $productDescription, $categoryId, $productId);
+    } else {
+        // If no new image is uploaded
+        $updateQuery = "UPDATE products SET pname = ?, price = ?, description = ?, cid = ? WHERE pid = ?";
+        $stmt = $conn->prepare($updateQuery);
+        $stmt->bind_param("ssdsi", $productName, $productPrice, $productDescription, $categoryId, $productId);
+    }
+
     if ($stmt->execute()) {
         $stmt->close();
         // Redirect to products.php to prevent form resubmission on refresh
@@ -134,6 +206,85 @@ $conn->close();
             text-decoration: underline;
             color: #0056b3;
         }
+         /* Modal Background */
+         .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; /* 5% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            border-radius: 8px;
+            width: 80%; /* Width of modal */
+            max-width: 600px; /* Maximum width */
+        }
+
+        /* Close Button */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        /* Close Button Hover */
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Modal Form */
+        .modal-content form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-content label {
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .modal-content input[type="text"],
+        .modal-content input[type="number"],
+        .modal-content textarea,
+        .modal-content select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .modal-content button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            align-self: flex-start;
+        }
+
+        .modal-content button[type="submit"]:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
@@ -169,9 +320,8 @@ $conn->close();
                 
                 <label for="categoryId">Category:</label>
                 <select id="categoryId" name="categoryId" required>
-                    <option value="">Select Category</option>
                     <?php
-                    // Fetch categories for the form
+                    // Fetch categories for the dropdown
                     if ($categoriesResult->num_rows > 0) {
                         while ($row = $categoriesResult->fetch_assoc()) {
                             echo "<option value='" . $row['cid'] . "'>" . $row['category_name'] . "</option>";
@@ -182,49 +332,49 @@ $conn->close();
                 
                 <button type="submit" name="submit">Add Product</button>
             </form>
-
-            <h2>Products</h2>
-            <table class="product-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Image</th>
-                        <th>Description</th>
-                        <th>Category</th>
-                        <th>Price</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                        if ($result->num_rows > 0) {
-                            while ($row = $result->fetch_assoc()) {
-                                echo "<tr id='product-row-" . $row['pid'] . "'>";
-                                echo "<td>" . $row['pid'] . "</td>";
-                                echo "<td>" . $row['pname'] . "</td>";
-                                echo "<td><img src='" . $row['pimage'] . "' alt='Product Image' style='max-width: 100px;'></td>";
-                                echo "<td>" . $row['description'] . "</td>";
-                                echo "<td>" . $row['category_name'] . "</td>";
-                                echo "<td>$" . number_format($row['price'], 2) . "</td>";
-                                echo "<td>";
-                                echo "<button onclick='openEditModal('" . $row['pid'] . "', '" . htmlspecialchars($row['pname'], ENT_QUOTES) . "', '" . htmlspecialchars($row['pimage'], ENT_QUOTES) . "', '" . $row['price'] . "', '" . htmlspecialchars($row['description'], ENT_QUOTES) . "', '" . $row['cid'] . "')'>Update</button>";
-                                echo "<button onclick='deleteProduct(" . $row['pid'] . ")'>Delete</button>";
-                                echo "</td>";
-                                echo "</tr>";
-                            }
-                        } else {
-                            echo "<tr><td colspan='7'>No products found.</td></tr>";
-                        }
-                    ?>
-                </tbody>
-            </table>
         </div>
+        
+        <h2>Products</h2>
+        <table class="product-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Image</th>
+                    <th>Price</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                // Fetch products from the database and display them
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<tr id='product-row-" . $row['pid'] . "'>";
+                        echo "<td>" . $row['pid'] . "</td>";
+                        echo "<td>" . $row['pname'] . "</td>";
+                        echo "<td><img src='" . $row['pimage'] . "' alt='" . $row['pname'] . "'></td>";
+                        echo "<td>" . $row['price'] . "</td>";
+                        echo "<td>" . $row['description'] . "</td>";
+                        echo "<td>" . $row['category_name'] . "</td>";
+                        echo "<td>";
+                        echo "<a href='#' onclick=\"openEditModal('" . $row['pid'] . "', '" . $row['pname'] . "', '" . $row['pimage'] . "', '" . $row['price'] . "', '" . $row['description'] . "', '" . $row['cid'] . "')\">Edit</a> | ";
+                        echo "<a href='#' onclick=\"deleteProduct('" . $row['pid'] . "')\">Delete</a>";
+                        echo "</td>";
+                        echo "</tr>";
+                    }
+                }
+                ?>
+            </tbody>
+        </table>
     </div>
-    <!-- Modal for editing product details -->
-    <div id="editModal" class="modal">
+
+    <!-- Modal Structure -->
+    <div class="modal" id="editModal">
         <div class="modal-content">
-            <span class="close" onclick="openEditModal()">&times;</span>
+            <span class="close" onclick="closeEditModal()">&times;</span>
             <h2>Edit Product</h2>
             <form id="editForm" action="products.php" method="POST" enctype="multipart/form-data">
                 <input type="hidden" id="editProductId" name="editProductId">
@@ -258,43 +408,44 @@ $conn->close();
             </form>
         </div>
     </div>
+
     <script>
-        // JavaScript functions for modal operations and AJAX delete
+    function openEditModal(pid, pname, pimage, price, description, cid) {
+        document.getElementById('editProductId').value = pid;
+        document.getElementById('editProductName').value = pname;
+        document.getElementById('editProductPrice').value = price;
+        document.getElementById('editProductDescription').value = description;
+        document.getElementById('editCategoryId').value = cid;
 
-        function openEditModal(pid, pname, pimage, price, description, cid) {
-    document.getElementById('editProductId').value = pid;
-    document.getElementById('editProductName').value = pname;
-    document.getElementById('editProductImage').value = pimage;
-    document.getElementById('editProductPrice').value = price;
-    document.getElementById('editProductDescription').value = description;
-    document.getElementById('editCategoryId').value = cid;
+        // Optionally set the existing image URL or display it somewhere in the modal
+        document.getElementById('editProductImage').value = ''; // Reset file input (image preview can be shown if needed)
 
-    document.getElementById('editModal').style.display = "block";
-}
+        document.getElementById('editModal').style.display = "block";
+    }
+
 
         function closeEditModal() {
             document.getElementById('editModal').style.display = "none";
         }
 
         function deleteProduct(pid) {
-        if (confirm("Are you sure you want to delete this product?")) {
-            // Create AJAX request to delete product
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "deleteproduct.php", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    if (response.status === 'success') {
-                        document.getElementById('product-row-' + pid).remove();
-                    } else {
-                        alert("Error deleting product: " + response.message);
+            if (confirm("Are you sure you want to delete this product?")) {
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "deleteproduct.php", true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response.status === 'success') {
+                            document.getElementById('product-row-' + pid).remove();
+                        } else {
+                            alert("Error deleting product: " + response.message);
+                        }
                     }
-                }
-            };
-            xhr.send("productId=" + pid);
+                };
+                xhr.send("productId=" + pid);
+            }
         }
-    }
     </script>
 </body>
 </html>

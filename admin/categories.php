@@ -1,5 +1,4 @@
 <?php
-// Include database connection
 include('include/connectdb.php');
 
 // Process form submission if category is added
@@ -10,6 +9,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     // Handle image upload
     if (isset($_FILES['categoryImage']) && $_FILES['categoryImage']['error'] == 0) {
         $targetDir = "uploads/categories/"; // Set your desired upload directory
+        if (!is_dir($targetDir)) {
+            mkdir($targetDir, 0777, true); // Create the directory if it doesn't exist
+        }
         $targetFile = $targetDir . basename($_FILES["categoryImage"]["name"]);
         $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
 
@@ -54,11 +56,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     $stmt->bind_param("ss", $categoryName, $categoryImage);
 
     if ($stmt->execute()) {
-        // Fetch newly added category ID
         $newCategoryId = $stmt->insert_id;
         $stmt->close();
 
-        // Fetch the newly added category details
         $selectQuery = "SELECT cid, category_name, category_image FROM categories WHERE cid = ?";
         $stmt = $conn->prepare($selectQuery);
         $stmt->bind_param("i", $newCategoryId);
@@ -67,7 +67,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
 
         if ($result->num_rows > 0) {
             $category = $result->fetch_assoc();
-            // JSON response for AJAX
             echo json_encode(['status' => 'success', 'category' => $category]);
             exit;
         } else {
@@ -75,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
             exit;
         }
     } else {
-        echo json_encode(['status' => 'error', 'message' => $stmt->error]);
+        echo json_encode(['status' => 'error', 'message' => 'Failed to insert category: ' . $stmt->error]);
         exit;
     }
 }
@@ -244,7 +243,7 @@ $conn->close();
 
         $.ajax({
             type: 'POST',
-            url: 'categoriesinsert.php',
+            url: 'categoriesinsert.php', // Ensure this URL is correct
             data: formData,
             processData: false,
             contentType: false,
@@ -297,6 +296,5 @@ $conn->close();
 });
 
     </script>
-
 </body>
 </html>

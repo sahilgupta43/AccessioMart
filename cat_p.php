@@ -76,12 +76,12 @@ $conn->close();
     <div class="product-card">
         <img src="admin/uploads/<?php echo htmlspecialchars($product['pimage']); ?>" alt="<?php echo htmlspecialchars($product['pname']); ?>" class="product-image">
         <div class="product-name"><?php echo htmlspecialchars($product['pname']); ?></div>
-        <div class="product-price">$<?php echo htmlspecialchars($product['price']); ?></div>
+        <div class="product-price">NPR<?php echo htmlspecialchars($product['price']); ?></div>
     </div>
     <?php endforeach; ?>
 </div>
 
-<a href="index.php" class="back-link">Back to Categories</a>
+<a href="categories.php" class="back-link">Back to Categories</a>
 
 <?php include('include/footer.php') ?>
 

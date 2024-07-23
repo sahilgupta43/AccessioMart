@@ -1,6 +1,5 @@
 <?php
-// Include database connection
-include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
+include('include/connectdb.php');
 
 // Process form submission if category is added
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -11,10 +10,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    // Handle image upload
+    // Initialize variable for image handling
     $categoryImage = '';
     if (isset($_FILES['categoryImage']) && $_FILES['categoryImage']['error'] == 0) {
-        $targetDir = "uploads/categories/"; // Set your desired upload directory
+        $targetDir = "uploads/categories/";
+        
+        // Create directory if it does not exist
+        if (!is_dir($targetDir)) {
+            mkdir($targetDir, 0777, true);
+        }
+
         $targetFile = $targetDir . basename($_FILES["categoryImage"]["name"]);
         $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
 
@@ -25,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit;
         }
 
-        // Check file size (e.g., limit to 2MB)
+        // Check file size (limit to 2MB)
         if ($_FILES["categoryImage"]["size"] > 2000000) {
             echo json_encode(['status' => 'error', 'message' => 'Sorry, your file is too large']);
             exit;
@@ -46,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Try to upload file
         if (move_uploaded_file($_FILES["categoryImage"]["tmp_name"], $targetFile)) {
-            $categoryImage = $targetFile; // Set the file path to save in the database
+            $categoryImage = $targetFile;
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Sorry, there was an error uploading your file']);
             exit;
@@ -72,7 +77,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($result->num_rows > 0) {
             $category = $result->fetch_assoc();
-            // JSON response for AJAX
             echo json_encode(['status' => 'success', 'category' => $category]);
             exit;
         } else {
@@ -87,4 +91,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo json_encode(['status' => 'error', 'message' => 'Invalid request']);
     exit;
 }
+
+// Close database connection
+$conn->close();
 ?>

@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AccessioMart</title>
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/search.css">
 </head>
 <body>
     <!-- Header -->
@@ -39,23 +38,19 @@
                 <a href="#" class="icon" id="search-icon">🔍</a>
             </div>
             <div class="menu-toggle" id="menu-toggle">
-                
+                <!-- Menu icon for mobile view -->
             </div>
         </nav>
     </header>
 
-    <!-- Search Modal -->
-    <div id="search-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <form action="searchproduct.php" method="GET">
-                <input type="text" name="search_query" placeholder="Search for products...">
-                <button type="submit">Search</button>
-            </form>
-        </div>
+    <!-- Search Popup Box -->
+    <div id="search-popup" class="search-popup">
+        <form id="search-form" action="search.php" method="GET">
+            <input type="text" name="query" placeholder="Search for products..." required>
+            <button type="submit">Search</button>
+        </form>
     </div>
 
     <script src="js/script.js"></script>
-    <script src="js/search.js"></script>
 </body>
 </html>

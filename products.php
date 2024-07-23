@@ -130,7 +130,7 @@ $conn->close();
     <div class="product-card">
         <img src="admin/<?php echo $product['pimage']; ?>" alt="<?php echo $product['pname']; ?>" class="product-image">
         <div class="product-name"><?php echo $product['pname']; ?></div>
-        <div class="product-price">$<?php echo $product['price']; ?></div>
+        <div class="product-price">NPR<?php echo $product['price']; ?></div>
         <form action="products.php" method="GET">
             <input type="hidden" name="add_to_cart" value="<?php echo $product['pid']; ?>">
             <button type="submit" class="button add-to-cart">Add to Cart</button>

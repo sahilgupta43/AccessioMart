@@ -19,3 +19,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+//search
+document.addEventListener('DOMContentLoaded', function() {
+    const searchIcon = document.getElementById('search-icon');
+    const searchPopup = document.getElementById('search-popup');
+    const overlay = document.createElement('div');
+    overlay.classList.add('overlay');
+    document.body.appendChild(overlay);
+
+    searchIcon.addEventListener('click', function(e) {
+        e.preventDefault();
+        searchPopup.style.display = 'block';
+        overlay.style.display = 'block';
+    });
+
+    overlay.addEventListener('click', function() {
+        searchPopup.style.display = 'none';
+        overlay.style.display = 'none';
+    });
+});
