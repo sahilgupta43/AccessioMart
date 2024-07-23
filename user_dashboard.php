@@ -91,7 +91,7 @@ $conn->close();
     </tr>
 </table>
 
-<a href="index.php" class="logout-button">Logout</a>
+<a href="logout.php" class="logout-button">Logout</a>
 
 </body>
 </html>

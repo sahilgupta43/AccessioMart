@@ -1,11 +1,12 @@
 <?php
 session_start(); // Start or resume session
 
-include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
-include('include/header.php');
+include ('D:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
+include ('include/header.php');
 
 // Function to display checkout form and process payment
-function displayCheckout() {
+function displayCheckout()
+{
     // Calculate total amount
     $subtotal = 0;
     if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
@@ -69,6 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -78,6 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
         }
+
         .button {
             padding: 10px 20px;
             background-color: #28a745;
@@ -88,8 +91,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     </style>
 </head>
+
 <body>
 
-<?php include('include/footer.php') ?>
+    <?php include ('include/footer.php') ?>
 </body>
+
 </html>
