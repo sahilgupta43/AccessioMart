@@ -28,16 +28,34 @@ function getProductById($productId) {
 
 // Function to add product to cart
 function addToCart($productId) {
-    if (isset($_SESSION['cart'][$productId])) {
-        $_SESSION['cart'][$productId]['quantity']++;
+    global $products;
+
+    // Ensure the user is logged in
+    if (isset($_SESSION['userid'])) {
+        $userId = $_SESSION['userid'];
+        $cartKey = 'cart_' . $userId; // Create a unique cart key for the user
+
+        // Initialize the user's cart if not already set
+        if (!isset($_SESSION[$cartKey])) {
+            $_SESSION[$cartKey] = array();
+        }
+
+        if (isset($_SESSION[$cartKey][$productId])) {
+            $_SESSION[$cartKey][$productId]['quantity']++;
+        } else {
+            $product = getProductById($productId);
+            $_SESSION[$cartKey][$productId] = array(
+                'name' => $product['pname'],
+                'price' => $product['price'],
+                'image' => $product['pimage'],
+                'quantity' => 1,
+            );
+        }
     } else {
-        $product = getProductById($productId);
-        $_SESSION['cart'][$productId] = array(
-            'name' => $product['pname'],
-            'price' => $product['price'],
-            'image' => $product['pimage'],
-            'quantity' => 1,
-        );
+        // Handle the case where the user is not logged in
+        // You might want to redirect them to the login page or show a message
+        header("Location: signin.php");
+        exit();
     }
 }
 

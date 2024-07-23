@@ -18,13 +18,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Prepare SQL statement to check if email exists
-    $stmt = $conn->prepare("SELECT userid, email, password FROM customers WHERE email = ?");
+    $stmt = $conn->prepare("SELECT userid, password FROM customers WHERE email = ?");
+    if (!$stmt) {
+        die("Database query failed: " . $conn->error);
+    }
     $stmt->bind_param('s', $email);
     $stmt->execute();
     $result = $stmt->get_result();
 
     // Check if user exists
-    if ($result->num_rows === 0) {
+    if ($result->num_rows == 0) {
         header('Location: signin.php?error=Invalid email or password.');
         exit();
     }
@@ -33,13 +36,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $result->fetch_assoc();
 
     // Verify password
-    if (!password_verify($password, $user['password'])) {
+    if (password_verify($password, $user['password'])) {
         header('Location: signin.php?error=Invalid email or password.');
         exit();
     }
 
     // Store user ID in session
-    $_SESSION['userid'] = $user['id'];
+    $_SESSION['userid'] = $user['userid'];
 
     // Redirect to the index page
     header('Location: index.php');
