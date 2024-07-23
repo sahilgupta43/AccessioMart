@@ -1,5 +1,5 @@
 <?php
-include('include/db_connection.php');
+include('include/connectdb.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
