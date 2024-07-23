@@ -65,7 +65,7 @@ $conn->close();
     <?php foreach ($categories as $category): ?>
     <div class="category-card">
         <a href="cat_p.php?cid=<?php echo $category['cid']; ?>" class="category-link">
-            <img src="admin/uploads/<?php echo $category['category_image']; ?>" alt="<?php echo $category['category_name']; ?>" class="category-image">
+            <img src="admin/<?php echo $category['category_image']; ?>" alt="<?php echo $category['category_name']; ?>" class="category-image">
             <div class="category-name"><?php echo $category['category_name']; ?></div>
         </a>
     </div>

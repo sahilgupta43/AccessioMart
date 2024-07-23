@@ -74,7 +74,7 @@ $conn->close();
 <div class="product-container">
     <?php foreach ($products as $product): ?>
     <div class="product-card">
-        <img src="admin/uploads/<?php echo htmlspecialchars($product['pimage']); ?>" alt="<?php echo htmlspecialchars($product['pname']); ?>" class="product-image">
+        <img src="admin/<?php echo htmlspecialchars($product['pimage']); ?>" alt="<?php echo htmlspecialchars($product['pname']); ?>" class="product-image">
         <div class="product-name"><?php echo htmlspecialchars($product['pname']); ?></div>
         <div class="product-price">NPR<?php echo htmlspecialchars($product['price']); ?></div>
     </div>
