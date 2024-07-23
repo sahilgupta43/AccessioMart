@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Prepare SQL statement to check if email exists
-    $stmt = $conn->prepare("SELECT userid, password FROM customers WHERE email = ?");
+    $stmt = $conn->prepare("SELECT userid, email, password FROM customers WHERE email = ?");
     $stmt->bind_param('s', $email);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Store user ID in session
-    $_SESSION['user_id'] = $user['id'];
+    $_SESSION['userid'] = $user['id'];
 
     // Redirect to the index page
     header('Location: index.php');
