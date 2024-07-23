@@ -6,6 +6,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     $categoryName = trim($_POST['categoryName']);
     $categoryImage = ''; // Placeholder for image handling
 
+    // Validate category name (only alphabets and numbers)
+    if (!preg_match('/^[a-zA-Z0-9]+$/', $categoryName)) {
+        echo json_encode(['status' => 'error', 'message' => 'Category name should contain only alphabets and numbers']);
+        exit;
+    }
+
+    // Check for duplicate category name
+    $checkQuery = "SELECT cid FROM categories WHERE category_name = ?";
+    $stmt = $conn->prepare($checkQuery);
+    $stmt->bind_param("s", $categoryName);
+    $stmt->execute();
+    $stmt->store_result();
+
+    if ($stmt->num_rows > 0) {
+        echo json_encode(['status' => 'error', 'message' => 'Category name already exists']);
+        exit;
+    }
+    $stmt->close();
+
     // Handle image upload
     if (isset($_FILES['categoryImage']) && $_FILES['categoryImage']['error'] == 0) {
         $targetDir = "uploads/categories/"; // Set your desired upload directory
@@ -86,6 +105,7 @@ $result = $conn->query($selectQuery);
 // Close database connection
 $conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -181,7 +201,7 @@ $conn->close();
 </head>
 <body>
     <div class="sidebar">
-    <div class="sidebar-header">
+        <div class="sidebar-header">
             <h2>Admin Portal</h2>
         </div>
         <ul class="nav-links">
@@ -238,64 +258,90 @@ $conn->close();
 
     <script>
         $(document).ready(function() {
-    $('#addCategoryForm').submit(function(event) {
-        event.preventDefault();
-        var formData = new FormData(this);
+            $('#addCategoryForm').submit(function(event) {
+                event.preventDefault();
+                
+                var categoryName = $('#categoryName').val();
+                var formData = new FormData(this);
 
-        $.ajax({
-            type: 'POST',
-            url: 'categoriesinsert.php', // Ensure this URL is correct
-            data: formData,
-            processData: false,
-            contentType: false,
-            dataType: 'json',
-            success: function(response) {
-                if (response.status === 'success') {
-                    var category = response.category;
-                    var newRow = "<tr>" +
-                        "<td>" + category.cid + "</td>" +
-                        "<td>" + category.category_name + "</td>" +
-                        "<td><a href='categorydelete.php?cid=" + category.cid + "' class='delete-category'>Delete</a></td>" +
-                        "</tr>";
-                    $('#categoryTableBody').append(newRow);
-                    alert('Category added successfully.');
-                } else {
-                    alert('Failed to add category: ' + response.message);
+                // Validate category name
+                if (!/^[a-zA-Z0-9]+$/.test(categoryName)) {
+                    alert('Category name should contain only alphabets and numbers');
+                    return;
                 }
-            },
-            error: function(xhr, status, error) {
-                console.log('Server response:', xhr.responseText);
-                alert('Failed to add category: ' + error);
-            }
-        });
-    });
 
-    $(document).on('click', '.delete-category', function(event) {
-        event.preventDefault();
-        var deleteUrl = $(this).attr('href');
+                // Check for duplicate category name
+                $.ajax({
+                    type: 'POST',
+                    url: 'check_category.php', // New script to check for duplicate category
+                    data: { categoryName: categoryName },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status === 'exists') {
+                            alert('Category name already exists');
+                            return;
+                        }
 
-        if (confirm("Are you sure you want to delete this category?")) {
-            $.ajax({
-                type: 'GET',
-                url: deleteUrl,
-                dataType: 'json',
-                success: function(response) {
-                    if (response.status === 'success') {
-                        $(event.target).closest('tr').remove();
-                        alert('Category deleted successfully.');
-                    } else {
-                        alert('Failed to delete category: ' + response.message);
+                        // Submit the form if no duplicates
+                        $.ajax({
+                            type: 'POST',
+                            url: 'categoriesinsert.php', // Ensure this URL is correct
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            dataType: 'json',
+                            success: function(response) {
+                                if (response.status === 'success') {
+                                    var category = response.category;
+                                    var newRow = "<tr>" +
+                                        "<td>" + category.cid + "</td>" +
+                                        "<td>" + category.category_name + "</td>" +
+                                        "<td><a href='categorydelete.php?cid=" + category.cid + "' class='delete-category'>Delete</a></td>" +
+                                        "</tr>";
+                                    $('#categoryTableBody').append(newRow);
+                                    alert('Category added successfully.');
+                                } else {
+                                    alert('Failed to add category: ' + response.message);
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.log('Server response:', xhr.responseText);
+                                alert('Failed to add category: ' + error);
+                            }
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Server response:', xhr.responseText);
+                        alert('Failed to check category: ' + error);
                     }
-                },
-                error: function(xhr, status, error) {
-                    console.log('Server response:', xhr.responseText);
-                    alert('Failed to delete category: ' + error);
+                });
+            });
+
+            $(document).on('click', '.delete-category', function(event) {
+                event.preventDefault();
+                var deleteUrl = $(this).attr('href');
+
+                if (confirm("Are you sure you want to delete this category?")) {
+                    $.ajax({
+                        type: 'GET',
+                        url: deleteUrl,
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.status === 'success') {
+                                $(event.target).closest('tr').remove();
+                                alert('Category deleted successfully.');
+                            } else {
+                                alert('Failed to delete category: ' + response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.log('Server response:', xhr.responseText);
+                            alert('Failed to delete category: ' + error);
+                        }
+                    });
                 }
             });
-        }
-    });
-});
-
+        });
     </script>
 </body>
 </html>
