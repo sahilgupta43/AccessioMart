@@ -60,6 +60,21 @@ $conn->close();
             font-size: 16px;
             color: #333;
         }
+        .button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .add-to-cart {
+            background-color: #28a745;
+        }
+        .add-to-wishlist {
+            background-color: #dc3545;
+        }
         .back-link {
             display: inline-block;
             margin: 20px;
@@ -77,6 +92,14 @@ $conn->close();
         <img src="admin/<?php echo htmlspecialchars($product['pimage']); ?>" alt="<?php echo htmlspecialchars($product['pname']); ?>" class="product-image">
         <div class="product-name"><?php echo htmlspecialchars($product['pname']); ?></div>
         <div class="product-price">NPR<?php echo htmlspecialchars($product['price']); ?></div>
+        <form action="cart.php" method="POST">
+            <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($product['pid']); ?>">
+            <button type="submit" class="button add-to-cart">Add to Cart</button>
+        </form>
+        <form action="wishlist.php" method="POST">
+            <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($product['pid']); ?>">
+            <button type="submit" class="button add-to-wishlist">Add to Wishlist</button>
+        </form>
     </div>
     <?php endforeach; ?>
 </div>

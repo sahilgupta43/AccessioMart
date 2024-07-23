@@ -27,18 +27,36 @@ if (session_status() === PHP_SESSION_NONE) {
 // Function to add product to cart
 function addToCart($productId) {
     global $products;
-    if (isset($_SESSION['cart'][$productId])) {
-        $_SESSION['cart'][$productId]['quantity']++;
+
+    // Ensure the user is logged in
+    if (isset($_SESSION['userid'])) {
+        $userId = $_SESSION['userid'];
+        $cartKey = 'cart_' . $userId; // Create a unique cart key for the user
+
+        // Initialize the user's cart if not already set
+        if (!isset($_SESSION[$cartKey])) {
+            $_SESSION[$cartKey] = array();
+        }
+
+        if (isset($_SESSION[$cartKey][$productId])) {
+            $_SESSION[$cartKey][$productId]['quantity']++;
+        } else {
+            $product = getProductById($productId);
+            $_SESSION[$cartKey][$productId] = array(
+                'name' => $product['pname'],
+                'price' => $product['price'],
+                'image' => $product['pimage'],
+                'quantity' => 1,
+            );
+        }
     } else {
-        $product = getProductById($productId);
-        $_SESSION['cart'][$productId] = array(
-            'name' => $product['pname'],
-            'price' => $product['price'],
-            'image' => $product['pimage'],
-            'quantity' => 1,
-        );
+        // Handle the case where the user is not logged in
+        // You might want to redirect them to the login page or show a message
+        header("Location: signin.php");
+        exit();
     }
 }
+
 
 // Function to get product details by ID
 function getProductById($productId) {
@@ -96,6 +114,7 @@ $conn->close();
             width: 100%;
             height: auto;
             border-radius: 10px;
+            cursor: pointer;
         }
         .product-name {
             font-size: 18px;
@@ -128,7 +147,9 @@ $conn->close();
 <div class="product-container">
     <?php foreach ($products as $product): ?>
     <div class="product-card">
-        <img src="admin/<?php echo $product['pimage']; ?>" alt="<?php echo $product['pname']; ?>" class="product-image">
+        <a href="productdetails.php?pid=<?php echo $product['pid']; ?>">
+            <img src="admin/<?php echo $product['pimage']; ?>" alt="<?php echo $product['pname']; ?>" class="product-image">
+        </a>
         <div class="product-name"><?php echo $product['pname']; ?></div>
         <div class="product-price">NPR<?php echo $product['price']; ?></div>
         <form action="products.php" method="GET">
