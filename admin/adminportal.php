@@ -67,7 +67,7 @@
                 <div class="card-icon">💰</div>
                 <div class="card-info">
                     <h3>Total Sales</h3>
-                    <p>$<?php echo number_format($totalSales, 2); ?></p>
+                    <p>NPR<?php echo number_format($totalSales, 2); ?></p>
                 </div>
             </div>
             <div class="card">

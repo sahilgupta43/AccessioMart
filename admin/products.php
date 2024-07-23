@@ -5,19 +5,18 @@ include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 $categoriesQuery = "SELECT cid, category_name FROM categories";
 $categoriesResult = $conn->query($categoriesQuery);
 
-// Process form submission if a product is updated
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
-    $productId = $_POST['editProductId'];
-    $productName = $_POST['editProductName'];
-    $productPrice = $_POST['editProductPrice'];
-    $productDescription = $_POST['editProductDescription'];
-    $categoryId = $_POST['editCategoryId'];
+// Process form submission if a product is added
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
+    $productName = $_POST['productName'];
+    $productPrice = $_POST['productPrice'];
+    $productDescription = $_POST['productDescription'];
+    $categoryId = $_POST['categoryId'];
 
-    // Check if a new image is uploaded
+    // Handle image upload if provided
     $productImage = ''; // Initialize empty for now
-    if (isset($_FILES['editProductImage']) && $_FILES['editProductImage']['error'] == UPLOAD_ERR_OK) {
+    if (isset($_FILES['productImage']) && $_FILES['productImage']['error'] == UPLOAD_ERR_OK) {
         $targetDir = "uploads/"; // Directory where images will be stored
-        $fileName = basename($_FILES['editProductImage']['name']);
+        $fileName = basename($_FILES['productImage']['name']);
         $targetFilePath = $targetDir . $fileName;
 
         // Check if uploads directory exists, if not create it
@@ -25,36 +24,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
             mkdir($targetDir, 0777, true);
         }
 
-        if (move_uploaded_file($_FILES['editProductImage']['tmp_name'], $targetFilePath)) {
+        if (move_uploaded_file($_FILES['productImage']['tmp_name'], $targetFilePath)) {
             $productImage = $targetFilePath;
         } else {
             echo "Sorry, there was an error uploading your file.";
         }
-    } else {
-        // If no new image is uploaded, retain the existing image
-        $existingProductQuery = "SELECT pimage FROM products WHERE pid = ?";
-        $stmt = $conn->prepare($existingProductQuery);
-        $stmt->bind_param("i", $productId);
-        $stmt->execute();
-        $stmt->bind_result($existingImage);
-        $stmt->fetch();
-        $stmt->close();
-        $productImage = $existingImage;
     }
 
-    // Update query
-    if ($productImage) {
-        // If a new image is uploaded
-        $updateQuery = "UPDATE products SET pname = ?, pimage = ?, price = ?, description = ?, cid = ? WHERE pid = ?";
-        $stmt = $conn->prepare($updateQuery);
-        $stmt->bind_param("ssdssi", $productName, $productImage, $productPrice, $productDescription, $categoryId, $productId);
-    } else {
-        // If no new image is uploaded
-        $updateQuery = "UPDATE products SET pname = ?, price = ?, description = ?, cid = ? WHERE pid = ?";
-        $stmt = $conn->prepare($updateQuery);
-        $stmt->bind_param("ssdsi", $productName, $productPrice, $productDescription, $categoryId, $productId);
-    }
-
+    $insertQuery = "INSERT INTO products (pname, pimage, price, description, cid) VALUES (?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($insertQuery);
+    $stmt->bind_param("ssdsi", $productName, $productImage, $productPrice, $productDescription, $categoryId);
     if ($stmt->execute()) {
         $stmt->close();
         // Redirect to products.php to prevent form resubmission on refresh
@@ -64,7 +43,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
         echo "Error: " . $stmt->error;
     }
 }
-
 
 // Process form submission if a product is updated
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
@@ -371,7 +349,6 @@ $conn->close();
         </table>
     </div>
 
-    <!-- Modal Structure -->
     <div class="modal" id="editModal">
         <div class="modal-content">
             <span class="close" onclick="closeEditModal()">&times;</span>
@@ -410,19 +387,16 @@ $conn->close();
     </div>
 
     <script>
-    function openEditModal(pid, pname, pimage, price, description, cid) {
-        document.getElementById('editProductId').value = pid;
-        document.getElementById('editProductName').value = pname;
-        document.getElementById('editProductPrice').value = price;
-        document.getElementById('editProductDescription').value = description;
-        document.getElementById('editCategoryId').value = cid;
+        function openEditModal(pid, pname, pimage, price, description, cid) {
+            document.getElementById('editProductId').value = pid;
+            document.getElementById('editProductName').value = pname;
+            document.getElementById('editProductImage').value = ''; // Reset file input
+            document.getElementById('editProductPrice').value = price;
+            document.getElementById('editProductDescription').value = description;
+            document.getElementById('editCategoryId').value = cid;
 
-        // Optionally set the existing image URL or display it somewhere in the modal
-        document.getElementById('editProductImage').value = ''; // Reset file input (image preview can be shown if needed)
-
-        document.getElementById('editModal').style.display = "block";
-    }
-
+            document.getElementById('editModal').style.display = "block";
+        }
 
         function closeEditModal() {
             document.getElementById('editModal').style.display = "none";
@@ -430,6 +404,7 @@ $conn->close();
 
         function deleteProduct(pid) {
             if (confirm("Are you sure you want to delete this product?")) {
+                // Create AJAX request to delete product
                 var xhr = new XMLHttpRequest();
                 xhr.open("POST", "deleteproduct.php", true);
                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
