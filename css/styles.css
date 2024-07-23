@@ -1,17 +1,26 @@
+:root {
+    --primary-color: #000000;
+    --secondary-color: #721717;
+    --text-color: #333;
+    --bg-color: #ffffff;
+    --highlight-color: #007bff;
+    --font-family: Arial, sans-serif;
+}
+
 /* General Styling */
 body {
-    font-family: Arial, sans-serif;
+    font-family: var(--font-family);
     margin: 0;
     padding: 0;
 }
 
 a {
     text-decoration: none;
-    color: #000000;
+    color: var(--primary-color);
 }
 
 a:hover {
-    color: #721717;
+    color: var(--secondary-color);
 }
 
 /* Header */
@@ -25,7 +34,7 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background-color: #ffffff;
+    background-color: var(--bg-color);
 }
 
 .date-time {
@@ -43,7 +52,7 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 15px 20px;
-    background-color: #000000;
+    background-color: var(--primary-color);
     color: white;
 }
 
@@ -133,13 +142,13 @@ header {
 .search-popup button {
     padding: 10px 20px;
     border: none;
-    background-color: #333;
+    background-color: var(--primary-color);
     color: white;
     cursor: pointer;
 }
 
 .search-popup button:hover {
-    background-color: #555;
+    background-color: var(--secondary-color);
 }
 
 /* Overlay */
@@ -153,7 +162,6 @@ header {
     background: rgba(0,0,0,0.5);
     z-index: 999;
 }
-
 
 /* Hero Section */
 .hero {
@@ -201,7 +209,7 @@ header {
 #featured-products .section-title {
     text-align: center;
     margin-bottom: 30px;
-    color: #333;
+    color: var(--text-color);
 }
 
 #featured-products .card {
@@ -250,10 +258,9 @@ header {
     }
 }
 
-
 /* Footer */
 footer {
-    background-color: #000000;
+    background-color: var(--primary-color);
     color: white;
     padding: 40px 20px;
     box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
@@ -265,7 +272,7 @@ footer h2 a {
 }
 
 footer h2 a:hover {
-    color: #007bff;
+    color: var(--highlight-color);
 }
 
 .footer-container {
@@ -338,7 +345,7 @@ footer h2 a:hover {
 #contact-map,
 #contact-address {
     flex: 0 1 47%;
-    background-color: #fff;
+    background-color: var(--bg-color);
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -348,7 +355,7 @@ footer h2 a:hover {
 #contact-form h2,
 #contact-map h2,
 #contact-address h2 {
-    color: #333;
+    color: var(--text-color);
     text-align: center;
     margin-bottom: 20px;
 }
@@ -412,7 +419,7 @@ footer h2 a:hover {
 
 .about-section h2 {
     font-size: 32px;
-    color: #333;
+    color: var(--text-color);
     margin-bottom: 20px;
 }
 
@@ -435,7 +442,7 @@ footer h2 a:hover {
 .why-choose-section h3,
 .contact-section h3 {
     font-size: 28px;
-    color: #333;
+    color: var(--text-color);
     margin-bottom: 15px;
 }
 
@@ -464,7 +471,7 @@ footer h2 a:hover {
 
 .contact-section .social-links h4 {
     font-size: 20px;
-    color: #333;
+    color: var(--text-color);
     margin-bottom: 10px;
 }
 
@@ -476,7 +483,7 @@ footer h2 a:hover {
 .contact-section .social-links a {
     display: inline-block;
     margin-right: 10px;
-    color: #007bff; /* FontAwesome default color */
+    color: var(--highlight-color);
     font-size: 24px; /* Adjust icon size */
 }
 
@@ -489,4 +496,3 @@ footer h2 a:hover {
         padding: 0 20px;
     }
 }
-
