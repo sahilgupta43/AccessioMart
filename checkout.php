@@ -1,8 +1,8 @@
 <?php
 session_start(); // Start or resume session
 
-include ('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
-include ('include/header.php');
+include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
+include('include/header.php');
 
 // Function to display checkout form and process payment
 function displayCheckout()
@@ -17,6 +17,15 @@ function displayCheckout()
     if (isset($_SESSION['userid'])) {
         $userId = $_SESSION['userid'];
         $cartKey = 'cart_' . $userId;
+
+        // Fetch user information
+        $userQuery = $conn->prepare("SELECT name FROM customers WHERE userid = ?");
+        $userQuery->bind_param("i", $userId);
+        $userQuery->execute();
+        $userResult = $userQuery->get_result();
+        $user = $userResult->fetch_assoc();
+        $userName = $user['name'];
+        $userQuery->close();
 
         // Check if cart is set and not empty
         if (isset($_SESSION[$cartKey]) && !empty($_SESSION[$cartKey])) {
@@ -35,8 +44,8 @@ function displayCheckout()
 
             foreach ($_SESSION[$cartKey] as $productId => $product) {
                 $totalPrice = $product['price'] * $product['quantity'];
-                $createOrder = $conn->prepare("INSERT INTO orders (orderid, userid, pname, pimage, price, quantity, totalprice) VALUES (?, ?, ?, ?, ?, ?, ?)");
-                $createOrder->bind_param("sisssdi", $orderId, $userId, $product['name'], $product['image'], $product['price'], $product['quantity'], $totalPrice);
+                $createOrder = $conn->prepare("INSERT INTO orders (orderid, userid, name, pname, pimage, price, quantity, totalprice) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                $createOrder->bind_param("sisssddi", $orderId, $userId, $userName, $product['name'], $product['image'], $product['price'], $product['quantity'], $totalPrice);
                 $createOrder->execute();
             }
 
@@ -83,7 +92,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     displayCheckout();
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -132,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
 
-    <?php include ('include/footer.php') ?>
+    <?php include('include/footer.php') ?>
 </body>
 
 </html>
