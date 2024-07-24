@@ -1,5 +1,5 @@
 <?php
-session_start(); // Start or resume session
+session_start(); // Start or resume the session
 
 // Check if the user is signed in
 if (!isset($_SESSION['userid'])) {
@@ -8,7 +8,9 @@ if (!isset($_SESSION['userid'])) {
 }
 
 include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
-include('include/header.php');
+
+// Include header without session_start() inside it
+include('include/without.php');
 
 $userID = $_SESSION['userid']; // Get user ID from session
 
@@ -78,10 +80,6 @@ $conn->close();
 
 <h2 class="dashboard-header">Welcome, <?php echo htmlspecialchars($user['name']); ?></h2>
 <table class="user-info-table">
-    <tr>
-        <th>UserID</th>
-        <td><?php echo htmlspecialchars($user['userid']); ?></td>
-    </tr>
     <tr>
         <th>Name</th>
         <td><?php echo htmlspecialchars($user['name']); ?></td>

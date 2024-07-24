@@ -1,7 +1,7 @@
 <?php
 // Include database connection and header
 include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
-include('include/header.php');
+include('include/without.php');
 
 // Get category ID from URL
 $cid = isset($_GET['cid']) ? intval($_GET['cid']) : 0;

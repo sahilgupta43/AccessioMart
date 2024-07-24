@@ -63,9 +63,9 @@ function displayCheckout()
             echo '<input type="hidden" name="su" value="' . $success_url . '">';
             echo '<input type="hidden" name="fu" value="' . $failure_url . '">';
             echo '<table style="width: 100%; border-collapse: collapse; margin: 0 auto;">';
-            echo '<tr><th>Total Amount</th><td>' . $totalAmount . '</td></tr>';
-            echo '<tr><th>Shipping Charge</th><td>' . $shippingCharge . '</td></tr>';
             echo '<tr><th>Subtotal</th><td>' . $subtotal . '</td></tr>';
+            echo '<tr><th>Shipping Charge</th><td>' . $shippingCharge . '</td></tr>';
+            echo '<tr><th>Total Amount</th><td>' . $totalAmount . '</td></tr>';
             echo '</table>';
             echo '<div style="text-align: center; margin-top: 20px;">';
             echo '<button type="submit" class="button">Pay with eSewa</button>';
