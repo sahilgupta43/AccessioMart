@@ -22,19 +22,20 @@ $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
-// SQL query to fetch user orders
-$sql_orders = "SELECT o.orderid, o.productid, p.pname, p.pimage, o.quantity, p.price, (o.quantity * p.price) AS total_price, o.status 
-                FROM orders o 
-                JOIN products p ON o.productid = p.pid 
-                WHERE o.userid = ?";
-$stmt_orders = $conn->prepare($sql_orders);
-$stmt_orders->bind_param("i", $userID);
-$stmt_orders->execute();
-$result_orders = $stmt_orders->get_result();
-$orders = $result_orders->fetch_all(MYSQLI_ASSOC);
-
 $stmt->close();
-$stmt_orders->close();
+
+// SQL query to fetch user orders
+$orderSql = "SELECT o.orderid, o.pid, p.pname, p.pimage, o.quantity, o.price, o.totalprice, o.status
+             FROM orders o
+             JOIN products p ON o.pid = p.pid
+             WHERE o.userid = ?";
+$orderStmt = $conn->prepare($orderSql);
+$orderStmt->bind_param("i", $userID);
+$orderStmt->execute();
+$orderResult = $orderStmt->get_result();
+$orders = $orderResult->fetch_all(MYSQLI_ASSOC);
+
+$orderStmt->close();
 $conn->close();
 ?>
 
@@ -46,39 +47,28 @@ $conn->close();
     <title>User Dashboard</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        /* styles.css */
         /* Unique styling for the user dashboard */
         .dashboard-header {
             text-align: center;
             margin-top: 20px;
-            font-size: 24px;
-            color: #333;
         }
 
-        .user-info-table, .order-table {
-            width: 90%;
-            max-width: 1200px;
+        .user-info-table {
+            width: 60%;
             margin: 20px auto;
             border-collapse: collapse;
             background: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        .user-info-table th, .order-table th, .user-info-table td, .order-table td {
+        .user-info-table th, .user-info-table td {
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
 
-        .user-info-table th, .order-table th {
+        .user-info-table th {
             background-color: #f2f2f2;
-            font-weight: bold;
-        }
-
-        .order-table img {
-            width: 50px;
-            height: auto;
-            border-radius: 4px;
         }
 
         .logout-button {
@@ -97,20 +87,52 @@ $conn->close();
             background-color: #0056b3;
         }
 
-        .order-table td {
-            vertical-align: middle;
+        /* Styles for the orders table */
+        .orders-table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        .order-table tr:hover {
-            background-color: #f9f9f9;
+        .orders-table th, .orders-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .orders-table th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .orders-table td img {
+            max-width: 50px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .orders-table td:last-child {
+            text-align: center;
+        }
+
+        /* CSS for status display */
+        .status-display {
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            background-color: #e9ecef;
+            color: #495057;
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
 <h2 class="dashboard-header">Welcome, <?php echo htmlspecialchars($user['name']); ?></h2>
-
-<!-- User Info Table -->
 <table class="user-info-table">
     <tr>
         <th>Name</th>
@@ -126,9 +148,8 @@ $conn->close();
     </tr>
 </table>
 
-<!-- Orders Table -->
-<h2 class="dashboard-header">Your Orders</h2>
-<table class="order-table">
+<h3 class="dashboard-header">Your Orders</h3>
+<table class="orders-table">
     <thead>
         <tr>
             <th>Order ID</th>
@@ -142,24 +163,22 @@ $conn->close();
         </tr>
     </thead>
     <tbody>
-        <?php if (!empty($orders)): ?>
-            <?php foreach ($orders as $order): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($order['orderid']); ?></td>
-                    <td><?php echo htmlspecialchars($order['productid']); ?></td>
-                    <td><?php echo htmlspecialchars($order['pname']); ?></td>
-                    <td><img src="admin/<?php echo htmlspecialchars($order['pimage']); ?>" alt="<?php echo htmlspecialchars($order['pname']); ?>"></td>
-                    <td><?php echo htmlspecialchars($order['quantity']); ?></td>
-                    <td>$<?php echo htmlspecialchars($order['price']); ?></td>
-                    <td>$<?php echo htmlspecialchars($order['total_price']); ?></td>
-                    <td><?php echo htmlspecialchars($order['status']); ?></td>
-                </tr>
-            <?php endforeach; ?>
-        <?php else: ?>
+        <?php foreach ($orders as $order): ?>
             <tr>
-                <td colspan="8">No orders found.</td>
+                <td><?php echo htmlspecialchars($order['orderid']); ?></td>
+                <td><?php echo htmlspecialchars($order['pid']); ?></td>
+                <td><?php echo htmlspecialchars($order['pname']); ?></td>
+                <td><img src="<?php echo htmlspecialchars($order['pimage']); ?>" alt="Product Image"></td>
+                <td><?php echo htmlspecialchars($order['quantity']); ?></td>
+                <td><?php echo htmlspecialchars($order['price']); ?></td>
+                <td><?php echo htmlspecialchars($order['totalprice']); ?></td>
+                <td>
+                    <span class="status-display">
+                        <?php echo htmlspecialchars($order['status']); ?>
+                    </span>
+                </td>
             </tr>
-        <?php endif; ?>
+        <?php endforeach; ?>
     </tbody>
 </table>
 
