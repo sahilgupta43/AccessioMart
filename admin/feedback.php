@@ -4,7 +4,7 @@
 
     // Function to fetch all orders from database
     function fetchUsers($conn) {
-        $selectQuery = "SELECT userid, name, email, phone FROM customers";
+        $selectQuery = "SELECT id, name, email, feedback FROM feedback";
         $result = $conn->query($selectQuery);
 
         if ($result->num_rows > 0) {
@@ -14,7 +14,7 @@
         }
     }
 
-    // Fetch all orders
+    // Fetch all users
     $users = fetchUsers($conn);
 ?>
 
@@ -23,7 +23,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Users</title>
+    <title>Feedback</title>
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
@@ -92,26 +92,26 @@
     </div>
 
     <div class="main-content">
-        <h2>Users</h2>
+        <h2>User's Feedback</h2>
 
         <!-- Users Table -->
         <div class="users-table">
             <table id="userTable" class="user-table">
                 <thead>
                     <tr>
-                        <th>User ID</th>
+                        <th>ID</th>
                         <th>Name</th>
                         <th>Email</th>
-                        <th>Phone Number</th>
+                        <th>Feedback</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($users as $user): ?>
                         <tr>
-                            <td><?php echo $user['userid']; ?></td>
+                            <td><?php echo $user['id']; ?></td>
                             <td><?php echo $user['name']; ?></td>
                             <td><?php echo $user['email']; ?></td>
-                            <td><?php echo $user['phone']; ?></td>
+                            <td><?php echo $user['feedback']; ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

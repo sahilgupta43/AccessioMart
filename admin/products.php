@@ -300,6 +300,7 @@ $conn->close();
             <li><a href="admins.php">Admins</a></li>
             <li><a href="orders.php">Orders</a></li>
             <li><a href="users.php">Users</a></li>
+            <li><a href="feedback.php">Feedback</a></li>
             <li><a href="logout.php">Logout</a></li>
         </ul>
     </div>
