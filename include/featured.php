@@ -2,11 +2,7 @@
 // Include database connection
 include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 
-// Start session to persist cart and wishlist data across pages
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
 // Fetch products with category name 'laptop'
 $selectQuery = "SELECT p.pid, p.pname, p.price, p.pimage

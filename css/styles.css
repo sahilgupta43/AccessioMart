@@ -123,7 +123,7 @@ header {
     background-color: white;
     border: 1px solid #ccc;
     padding: 20px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     z-index: 1000;
 }
 
@@ -159,7 +159,7 @@ header {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
     z-index: 999;
 }
 
@@ -168,7 +168,8 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-image: url('https://images.unsplash.com/photo-1573855619003-97b4799dcd8b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); /* Replace with your background image URL */
+    background-image: url('https://images.unsplash.com/photo-1573855619003-97b4799dcd8b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+    /* Replace with your background image URL */
     background-size: cover;
     background-position: center;
     height: 80vh;
@@ -209,7 +210,7 @@ header {
 #featured-products .section-title {
     text-align: center;
     margin-bottom: 30px;
-    color: var(--text-color);
+    color: #333;
 }
 
 #featured-products .card {
@@ -223,7 +224,8 @@ header {
 }
 
 #featured-products .card-img-top {
-    height: 200px; /* Adjust height as needed */
+    height: 200px;
+    /* Adjust height as needed */
     object-fit: cover;
 }
 
@@ -247,14 +249,52 @@ header {
     width: 48%;
 }
 
-@media (max-width: 768px) {
-    #featured-products .btn-group {
-        flex-direction: column;
-    }
 
-    #featured-products .btn {
-        width: 100%;
-        margin-top: 5px;
+/* Services Section Styles */
+#services {
+    padding: 50px 0;
+    background-color: #f9f9f9;
+}
+
+#services .section-title {
+    text-align: center;
+    margin-bottom: 50px;
+    color: #333;
+}
+
+#services .service-item {
+    text-align: center;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    transition: all 0.3s ease;
+}
+
+#services .service-item:hover {
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
+}
+
+#services .service-icon {
+    font-size: 40px;
+    color: #007bff;
+    margin-bottom: 20px;
+}
+
+#services .service-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+#services .service-description {
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    #services .service-item {
+        margin-bottom: 30px;
     }
 }
 
@@ -293,7 +333,8 @@ footer h2 a:hover {
     margin-bottom: 15px;
 }
 
-.footer-column p, .footer-column ul {
+.footer-column p,
+.footer-column ul {
     margin: 0;
     padding: 0;
     list-style: none;
@@ -484,10 +525,12 @@ footer h2 a:hover {
     display: inline-block;
     margin-right: 10px;
     color: var(--highlight-color);
-    font-size: 24px; /* Adjust icon size */
+    font-size: 24px;
+    /* Adjust icon size */
 }
 
 @media (max-width: 768px) {
+
     .about-section,
     .mission-section,
     .vision-section,

@@ -32,40 +32,138 @@ $conn->close();
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width==device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .go-back {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .go-back a {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+        }
+
+        .go-back i {
+            margin-right: 8px;
+            font-size: 20px;
+        }
+
         .product-details {
             display: flex;
             flex-direction: column;
             align-items: center;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            max-width: 450px;
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
         }
+
+        .product-details:hover {
+            transform: scale(1.02);
+        }
+
         .product-details img {
-            width: 300px;
+            width: 100%;
+            max-width: 500px;
             height: auto;
             border-radius: 10px;
+            transition: transform 0.3s ease-in-out;
         }
+
+        .product-details img:hover {
+            transform: scale(1.05);
+        }
+
         .product-details .product-name {
-            font-size: 24px;
+            font-size: 28px;
             margin: 16px 0;
+            color: #333;
         }
+
         .product-details .product-price {
-            font-size: 20px;
+            font-size: 24px;
             color: green;
             margin: 8px 0;
         }
+
+        .product-details .product-description {
+            font-size: 18px;
+            color: #666;
+            margin-top: 20px;
+        }
+
+        .product-details .buttons {
+            margin-top: 20px;
+        }
+
+        .product-details .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 5px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .product-details .btn:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .product-details .btn.wishlist {
+            background-color: #dc3545;
+        }
+
+        .product-details .btn.wishlist:hover {
+            background-color: #c82333;
+        }
+
         .suggestions {
-            margin-top: 50px;
-            text-align: center;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            max-width: 100%;
+            margin: 50px auto;
         }
+
         .suggestions h2 {
+            text-align: center;
             font-size: 22px;
+            color: #333;
+            margin-bottom: 20px;
         }
+
         .suggestions .product-container {
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
         }
+
         .suggestions .product-card {
             border: 1px solid #ccc;
             border-radius: 10px;
@@ -74,21 +172,69 @@ $conn->close();
             text-align: center;
             width: 200px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            background-color: #fff;
         }
+
+        .suggestions .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
         .suggestions .product-card img {
             width: 100%;
             height: auto;
             border-radius: 10px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .suggestions .product-card img:hover {
+            transform: scale(1.05);
+        }
+
+        .suggestions .product-name {
+            font-size: 18px;
+            color: #007bff;
+            margin: 16px 0;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .suggestions .product-card:hover .product-name {
+            color: #0056b3;
+        }
+
+        .suggestions .product-price {
+            font-size: 16px;
+            color: green;
+            margin-bottom: 10px;
+        }
+
+        .suggestions .product-card a {
+            text-decoration: none;
+            color: #007bff;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .suggestions .product-card a:hover {
+            color: #0056b3;
         }
     </style>
 </head>
 <body>
+
+<div class="go-back">
+    <a href="products.php"><i class="fas fa-arrow-left"></i> Back </a>
+</div>
 
 <div class="product-details">
     <img src="admin/<?php echo $product['pimage']; ?>" alt="<?php echo $product['pname']; ?>">
     <div class="product-name"><?php echo $product['pname']; ?></div>
     <div class="product-price">$<?php echo $product['price']; ?></div>
     <div class="product-description"><?php echo $product['description']; ?></div>
+    <div class="buttons">
+        <a href="cart.php?pid=<?php echo $product['pid']; ?>" class="btn">Add to Cart</a>
+        <a href="wishlist.php?pid=<?php echo $product['pid']; ?>" class="btn wishlist">Add to Wishlist</a>
+    </div>
 </div>
 
 <div class="suggestions">
@@ -96,10 +242,11 @@ $conn->close();
     <div class="product-container">
         <?php foreach ($suggested_products as $suggested_product): ?>
         <div class="product-card">
-            <img src="admin/<?php echo $suggested_product['pimage']; ?>" alt="<?php echo $suggested_product['pname']; ?>">
-            <div class="product-name"><?php echo $suggested_product['pname']; ?></div>
-            <div class="product-price">$<?php echo $suggested_product['price']; ?></div>
-            <a href="productdetails.php?pid=<?php echo $suggested_product['pid']; ?>">View Details</a>
+            <a href="productdetails.php?pid=<?php echo $suggested_product['pid']; ?>">
+                <img src="admin/<?php echo $suggested_product['pimage']; ?>" alt="<?php echo $suggested_product['pname']; ?>">
+                <div class="product-name"><?php echo $suggested_product['pname']; ?></div>
+                <div class="product-price">$<?php echo $suggested_product['price']; ?></div>
+            </a>
         </div>
         <?php endforeach; ?>
     </div>
