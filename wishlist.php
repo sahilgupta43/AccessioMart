@@ -1,6 +1,6 @@
 <?php
 include ('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
-include ('include/header.php');
+include ('include/without.php');
 
 // Fetch products from the database to display details in the wishlist
 $sql = "SELECT pid, pimage , pname, price FROM products";

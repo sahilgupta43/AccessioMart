@@ -1,7 +1,7 @@
 <?php
 // Include database connection and header
 include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
-include('include/header.php');
+include('include/without.php');
 
 // SQL query to fetch categories
 $sql = "SELECT cid, category_name, category_image FROM categories";

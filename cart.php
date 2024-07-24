@@ -2,7 +2,7 @@
 session_start(); // Start or resume session
 
 include ('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
-include ('include/header.php');
+include ('include/without.php');
 
 // Function to display cart details and summary
 function displayCart() {
