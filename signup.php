@@ -54,26 +54,6 @@
             background-color: #45a049;
         }
 
-        /* Google OAuth button styles */
-        .google-btn {
-            background-color: #dd4b39;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-            display: inline-block;
-            text-align: center;
-            text-decoration: none;
-            font-size: 16px;
-            margin-bottom: 15px;
-        }
-
-        .google-btn:hover {
-            background-color: #c23321;
-        }
-
         /* Error message styles */
         .error-message {
             color: red;
@@ -94,7 +74,7 @@
         <!-- Signup form -->
         <h2>Signup Form</h2>
 
-        <form action="process_signup.php" method="POST">
+        <form action="process_signup.php" method="POST" onsubmit="return validateForm()">
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" placeholder="Enter your name" required>
 
@@ -117,6 +97,55 @@
             </div>
         </form>
     </main>
+    <script>
+        function validateForm() {
+            // Get form elements
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            const conpassword = document.getElementById('conpassword').value;
+
+            // Regular expressions for validation
+            const nameRegex = /^[a-zA-Z\s]+$/;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const phoneRegex = /^\d{10}$/;
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+            // Validate name
+            if (!nameRegex.test(name)) {
+                alert('Name must contain only alphabets and spaces.');
+                return false;
+            }
+
+            // Validate email
+            if (!emailRegex.test(email)) {
+                alert('Invalid email format.');
+                return false;
+            }
+
+            // Validate phone
+            if (!phoneRegex.test(phone)) {
+                alert('Phone number must be 10 digits.');
+                return false;
+            }
+
+            // Validate password
+            if (!passwordRegex.test(password)) {
+                alert('Password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a number, and a special character.');
+                return false;
+            }
+
+            // Validate confirm password
+            if (password !== conpassword) {
+                alert('Passwords do not match.');
+                return false;
+            }
+
+            // If all validations pass
+            return true;
+        }
+    </script>
 </body>
 </html>
 

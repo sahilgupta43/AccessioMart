@@ -88,7 +88,7 @@ $conn->close();
     <img src="admin/<?php echo $product['pimage']; ?>" alt="<?php echo $product['pname']; ?>">
     <div class="product-name"><?php echo $product['pname']; ?></div>
     <div class="product-price">$<?php echo $product['price']; ?></div>
-    <div class="product-description"><?php echo $product['pdescription']; ?></div>
+    <div class="product-description"><?php echo $product['description']; ?></div>
 </div>
 
 <div class="suggestions">

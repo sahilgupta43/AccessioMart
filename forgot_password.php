@@ -5,7 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
 
     // Check if email exists in the database
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
+    $stmt = $pdo->prepare("SELECT * FROM customers WHERE email = :email");
     $stmt->bindParam(':email', $email);
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
