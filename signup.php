@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signup</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Main content styles */
         main {
@@ -54,6 +55,48 @@
             background-color: #45a049;
         }
 
+        /* Social button styles */
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            margin: 10px 5px; /* Adjust margins as needed */
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            color: white;
+            width: calc(50% - 10px); /* Adjust width to fit two buttons in a row */
+            box-sizing: border-box;
+        }
+
+        .google-btn {
+            background-color: #db4437;
+        }
+
+        .facebook-btn {
+            background-color: #3b5998;
+        }
+
+        .social-icon {
+            font-size: 20px; /* Adjust icon size */
+            margin-right: 10px;
+        }
+
+        .google-btn:hover {
+            background-color: #c1351d;
+        }
+
+        .facebook-btn:hover {
+            background-color: #2d4373;
+        }
+
+        /* Ensure the buttons are in a row */
+        form .social-btn {
+            display: inline-flex;
+        }
+
         /* Error message styles */
         .error-message {
             color: red;
@@ -65,6 +108,11 @@
         @media (max-width: 768px) {
             form {
                 width: 90%;
+            }
+
+            .social-btn {
+                width: 100%;
+                margin: 10px 0; /* Stack buttons on small screens */
             }
         }
     </style>
@@ -91,6 +139,14 @@
             <input type="password" id="conpassword" name="conpassword" placeholder="Confirm your password" required>
 
             <button type="submit" name="signup">Sign Up</button>
+
+            <button type="button" class="social-btn google-btn">
+                <i class="fab fa-google social-icon"></i> Sign Up with Google
+            </button>
+
+            <button type="button" class="social-btn facebook-btn">
+                <i class="fab fa-facebook social-icon"></i> Sign Up with Facebook
+            </button>
 
             <div>
                 <p>Already have an account? <a href="signin.php">Sign In</a></p>
