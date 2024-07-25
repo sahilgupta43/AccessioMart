@@ -5,6 +5,7 @@ include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 include('include/header.php');
 
 // Function to display checkout form and process payment
+// Function to display checkout form and process payment
 function displayCheckout()
 {
     global $conn; // Access global connection variable
@@ -39,8 +40,15 @@ function displayCheckout()
             $success_url = 'http://localhost/accessiomart/index.php'; // URL where eSewa redirects after successful payment
             $failure_url = 'http://localhost/accessiomart/cart.php'; // URL where eSewa redirects after failed payment
 
-            // Create order entries in the database
-            $orderId = uniqid();
+            // Generate a unique order ID
+            do {
+                $orderId = 'ORD' . time() . rand(1000, 9999);
+                $orderCheckQuery = $conn->prepare("SELECT orderid FROM orders WHERE orderid = ?");
+                $orderCheckQuery->bind_param("s", $orderId);
+                $orderCheckQuery->execute();
+                $orderCheckQuery->store_result();
+            } while ($orderCheckQuery->num_rows > 0);
+            $orderCheckQuery->close();
 
             foreach ($_SESSION[$cartKey] as $productId => $product) {
                 $totalPrice = $product['price'] * $product['quantity'];
@@ -92,6 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     displayCheckout();
 }
+
 ?>
 
 <!DOCTYPE html>

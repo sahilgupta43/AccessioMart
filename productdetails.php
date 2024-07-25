@@ -229,7 +229,7 @@ $conn->close();
 <div class="product-details">
     <img src="admin/<?php echo $product['pimage']; ?>" alt="<?php echo $product['pname']; ?>">
     <div class="product-name"><?php echo $product['pname']; ?></div>
-    <div class="product-price">$<?php echo $product['price']; ?></div>
+    <div class="product-price">NPR<?php echo $product['price']; ?></div>
     <div class="product-description"><?php echo $product['description']; ?></div>
     <div class="buttons">
         <a href="cart.php?pid=<?php echo $product['pid']; ?>" class="btn">Add to Cart</a>
@@ -245,7 +245,7 @@ $conn->close();
             <a href="productdetails.php?pid=<?php echo $suggested_product['pid']; ?>">
                 <img src="admin/<?php echo $suggested_product['pimage']; ?>" alt="<?php echo $suggested_product['pname']; ?>">
                 <div class="product-name"><?php echo $suggested_product['pname']; ?></div>
-                <div class="product-price">$<?php echo $suggested_product['price']; ?></div>
+                <div class="product-price">NPR<?php echo $suggested_product['price']; ?></div>
             </a>
         </div>
         <?php endforeach; ?>

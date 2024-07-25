@@ -2,8 +2,6 @@
 // Include database connection
 include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 
-
-
 // Fetch products with category name 'laptop'
 $selectQuery = "SELECT p.pid, p.pname, p.price, p.pimage
                 FROM products p
@@ -47,12 +45,7 @@ function addToCart($productId) {
                 'quantity' => 1,
             );
         }
-    } else {
-        // Handle the case where the user is not logged in
-        // You might want to redirect them to the login page or show a message
-        header("Location: signin.php");
-        exit();
-    }
+    } 
 }
 
 // Function to add product to wishlist
