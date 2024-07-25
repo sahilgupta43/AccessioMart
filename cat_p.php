@@ -28,6 +28,7 @@ if ($result->num_rows > 0) {
 $conn->close();
 ?>
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -91,10 +92,12 @@ $conn->close();
 <div class="product-container">
     <?php foreach ($products as $product): ?>
     <div class="product-card">
-        <img src="admin/<?php echo htmlspecialchars($product['pimage']); ?>" alt="<?php echo htmlspecialchars($product['pname']); ?>" class="product-image">
-        <div class="product-name"><?php echo htmlspecialchars($product['pname']); ?></div>
-        <div class="product-price">NPR<?php echo htmlspecialchars($product['price']); ?></div>
-        <form action="add_to_cart.php" method="POST">
+        <a href="productdetails.php?pid=<?php echo htmlspecialchars($product['pid']); ?>">
+            <img src="admin/<?php echo htmlspecialchars($product['pimage']); ?>" alt="<?php echo htmlspecialchars($product['pname']); ?>" class="product-image">
+            <div class="product-name"><?php echo htmlspecialchars($product['pname']); ?></div>
+            <div class="product-price">NPR<?php echo htmlspecialchars($product['price']); ?></div>
+        </a>
+        <form action="cart.php" method="POST">
             <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($product['pid']); ?>">
             <button type="submit" class="button add-to-cart">Add to Cart</button>
         </form>
