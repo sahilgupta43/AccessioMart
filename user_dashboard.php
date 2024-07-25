@@ -121,6 +121,9 @@ $conn->close();
             color: white;
             text-decoration: none;
             border-radius: 5px;
+            position: absolute;
+            right: 10px;
+            top: 20px;
         }
 
         .logout-button:hover {
@@ -168,6 +171,43 @@ $conn->close();
             color: #495057;
             text-align: center;
         }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        .update-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .update-button:hover {
+            background-color: #0056b3;
+        }
+
+        .success-message {
+            color: green;
+            text-align: center;
+            margin-top: 20px;
+        }
     </style>
     <script>
         function showSection(sectionId) {
@@ -185,11 +225,51 @@ $conn->close();
         document.addEventListener('DOMContentLoaded', function() {
             showSection('user-info');
         });
+        function validatePassword(password) {
+    var pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return pattern.test(password);
+}
+
+function updatePassword() {
+    var currentPassword = document.getElementById('current-password').value;
+    var newPassword = document.getElementById('new-password').value;
+    var confirmNewPassword = document.getElementById('confirm-new-password').value;
+    var errorMessage = document.getElementById('error-message');
+    var successMessage = document.getElementById('success-message');
+
+    if (newPassword !== confirmNewPassword) {
+        errorMessage.textContent = 'New passwords do not match.';
+        return false;
+    }
+
+    if (!validatePassword(newPassword)) {
+        errorMessage.textContent = 'Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.';
+        return false;
+    }
+
+    // Perform AJAX request to update password
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'update_password.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            if (xhr.responseText === 'success') {
+                successMessage.textContent = 'Successfully changed password.';
+                errorMessage.textContent = '';
+            } else {
+                errorMessage.textContent = xhr.responseText;
+                successMessage.textContent = '';
+            }
+        }
+    };
+    xhr.send('current_password=' + encodeURIComponent(currentPassword) + '&new_password=' + encodeURIComponent(newPassword));
+
+    return false;
+}
+
     </script>
 </head>
 <body>
-
-
 
 <div class="main-content">
     <h2 class="dashboard-header">Welcome, <?php echo htmlspecialchars($user['name']); ?></h2>
@@ -263,7 +343,23 @@ $conn->close();
 
     <div id="manage-password" class="content-section">
         <h3 class="dashboard-header">Manage Password</h3>
-        <!-- Add your form or functionality for managing the password here -->
+        <form onsubmit="return updatePassword();">
+            <div class="form-group">
+                <label for="current-password">Current Password</label>
+                <input type="password" id="current-password" name="current_password" required>
+            </div>
+            <div class="form-group">
+                <label for="new-password">New Password</label>
+                <input type="password" id="new-password" name="new_password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm-new-password">Confirm New Password</label>
+                <input type="password" id="confirm-new-password" name="confirm_new_password" required>
+            </div>
+            <button type="submit" class="update-button">Update Password</button>
+            <div id="error-message" class="error-message"></div>
+            <div id="success-message" class="success-message"></div>
+        </form>
     </div>
 
     <div id="delete-account" class="content-section">
