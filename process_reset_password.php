@@ -1,5 +1,5 @@
 <?php
-include('include/db_connection.php'); // Include your database connection file
+include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 
 if (isset($_POST['reset'])) {
     $token = $_POST['token'];
