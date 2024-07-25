@@ -5,7 +5,6 @@ include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 include('include/header.php');
 
 // Function to display checkout form and process payment
-// Function to display checkout form and process payment
 function displayCheckout()
 {
     global $conn; // Access global connection variable
@@ -52,8 +51,8 @@ function displayCheckout()
 
             foreach ($_SESSION[$cartKey] as $productId => $product) {
                 $totalPrice = $product['price'] * $product['quantity'];
-                $createOrder = $conn->prepare("INSERT INTO orders (orderid, userid, name, pname, pimage, price, quantity, totalprice) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-                $createOrder->bind_param("sisssddi", $orderId, $userId, $userName, $product['name'], $product['image'], $product['price'], $product['quantity'], $totalPrice);
+                $createOrder = $conn->prepare("INSERT INTO orders (orderid, userid, name, pname, pimage, price, quantity, totalprice, pid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $createOrder->bind_param("sisssddii", $orderId, $userId, $userName, $product['name'], $product['image'], $product['price'], $product['quantity'], $totalPrice, $productId);
                 $createOrder->execute();
             }
 

@@ -26,148 +26,6 @@ $userID = $_SESSION['userid'];
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
     <style>
-        /* Custom Styles */
-        #featured-products .section-title {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #333;
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        #featured-products .card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            overflow: hidden;
-            position: relative;
-            background-color: #fff;
-        }
-
-        #featured-products .card:hover {
-            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
-            transform: translateY(-5px);
-        }
-
-        #featured-products .card-img-top {
-            height: 200px; /* Adjust height as needed */
-            object-fit: cover;
-            transition: all 0.3s ease;
-        }
-
-        #featured-products .card:hover .card-img-top {
-            transform: scale(1.1);
-        }
-
-        #featured-products .card-body {
-            padding: 15px;
-        }
-
-        #featured-products .card-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #007bff;
-            transition: color 0.3s ease;
-        }
-
-        #featured-products .card:hover .card-title {
-            color: #0056b3;
-        }
-
-        #featured-products .card-text {
-            color: #666;
-            margin-bottom: 10px;
-        }
-
-        #featured-products .btn-group {
-            margin-top: 10px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        #featured-products .btn {
-            width: 48%;
-            background-color: #007bff;
-            color: #fff;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-
-        #featured-products .btn:hover {
-            background-color: #0056b3;
-            transform: translateY(-3px);
-        }
-
-        @media (max-width: 768px) {
-            #featured-products .btn-group {
-                flex-direction: column;
-            }
-
-            #featured-products .btn {
-                width: 100%;
-                margin-top: 5px;
-            }
-        }
-
-        /* Services Section Styles */
-        #services {
-            padding: 50px 0;
-            background-color: #f9f9f9;
-        }
-
-        #services .section-title {
-            text-align: center;
-            margin-bottom: 50px;
-            color: #333;
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        #services .service-item {
-            text-align: center;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #fff;
-            transition: all 0.3s ease;
-        }
-
-        #services .service-item:hover {
-            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
-            transform: translateY(-5px);
-        }
-
-        #services .service-icon {
-            font-size: 40px;
-            color: #007bff;
-            margin-bottom: 20px;
-            transition: color 0.3s ease;
-        }
-
-        #services .service-item:hover .service-icon {
-            color: #0056b3;
-        }
-
-        #services .service-title {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #007bff;
-            transition: color 0.3s ease;
-        }
-
-        #services .service-item:hover .service-title {
-            color: #0056b3;
-        }
-
-        #services .service-description {
-            color: #666;
-        }
-
-        @media (max-width: 768px) {
-            #services .service-item {
-                margin-bottom: 30px;
-            }
-        }
 
         /* Newsletter Section Styles */
         #newsletter {
@@ -212,6 +70,50 @@ $userID = $_SESSION['userid'];
         #newsletter .newsletter-form button:hover {
             background-color: #003f8a;
         }
+        /* Popup Message Styles */
+        #popup-message {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            background-color: #28a745;
+            color: #fff;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+  /* Detail Popup Styles */
+  #detail-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        #detail-popup button {
+            display: block;
+            margin: 0 auto;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #detail-popup button:hover {
+            background-color: #0056b3;
+        }
 
     </style>
 </head>
@@ -224,7 +126,8 @@ $userID = $_SESSION['userid'];
         </div>
     </section>
 
-    <?php include('include/featured.php') ?>
+    <!-- Featured Products -->
+    <?php include('include/featured.php'); ?>
 
     <!-- Services Section -->
     <section id="services">
@@ -255,15 +158,99 @@ $userID = $_SESSION['userid'];
         <div class="container">
             <h2 class="section-title">Subscribe to our Newsletter</h2>
             <p>Stay updated with the latest products and offers!</p>
-            <form class="newsletter-form">
-                <input type="email" placeholder="Enter your email address" required>
+            <form id="newsletter-form" class="newsletter-form">
+                <input type="email" name="email" placeholder="Enter your email address" required>
                 <button type="submit">Subscribe</button>
             </form>
         </div>
     </section>
 
-    <script src="script.js"></script>
+    <!-- Popup Message -->
+    <div id="popup-message"></div>
+
+     <!-- Detail Popup -->
+     <div id="detail-popup">
+        <p id="offer-detail"></p>
+        <button id="close-detail-popup">Close</button>
+    </div>
+
+    <script>
+        document.getElementById('newsletter-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+
+            fetch('subscribe.php', { // Path to the PHP script
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const popupMessage = document.getElementById('popup-message');
+
+                if (data.success) {
+                    popupMessage.textContent = 'Successfully subscribed!';
+                    popupMessage.style.backgroundColor = '#28a745'; // Green for success
+                } else {
+                    popupMessage.textContent = data.error;
+                    popupMessage.style.backgroundColor = '#dc3545'; // Red for error
+                }
+
+                popupMessage.style.display = 'block';
+                setTimeout(() => {
+                    popupMessage.style.display = 'none';
+                }, 2000);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const popupMessage = document.getElementById('popup-message');
+                popupMessage.textContent = 'An error occurred. Please try again.';
+                popupMessage.style.backgroundColor = '#dc3545'; // Red for error
+                popupMessage.style.display = 'block';
+
+                setTimeout(() => {
+                    popupMessage.style.display = 'none';
+                }, 2000);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('offer.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        const popupMessage = document.getElementById('popup-message');
+                        popupMessage.textContent = `Exclusive Offer: ${data[0].offer_name}`;
+                        popupMessage.style.display = 'block';
+                        popupMessage.addEventListener('click', function() {
+                            showDetailPopup(data[0]);
+                        });
+
+                        setTimeout(() => {
+                            popupMessage.style.display = 'none';
+                        }, 5000); // Hide after 5 seconds
+                    }
+                })
+                .catch(error => console.error('Error fetching offers:', error));
+        });
+
+        function showDetailPopup(offer) {
+            const detailPopup = document.getElementById('detail-popup');
+            const offerDetail = document.getElementById('offer-detail');
+            offerDetail.textContent = `Offer: ${offer.offer_name}\nCoupon Code: ${offer.coupon_code}`;
+            detailPopup.style.display = 'block';
+
+            document.getElementById('close-detail-popup').addEventListener('click', function() {
+                detailPopup.style.display = 'none';
+            });
+
+            setTimeout(() => {
+                detailPopup.style.display = 'none';
+            }, 30000); // Hide after 30 seconds
+        }
+    </script>
+
+    <?php include('include/footer.php'); ?>
 </body>
 </html>
-
-<?php include('include/footer.php') ?>

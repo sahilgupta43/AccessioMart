@@ -61,6 +61,10 @@ function addToCart($productId) {
     }
 }
 
+
+// Function to get product details by ID
+
+
 // Check if 'add_to_cart' parameter is set (simulating a form submission or button click)
 if (isset($_GET['add_to_cart'])) {
     $productId = $_GET['add_to_cart'];
@@ -77,7 +81,6 @@ if (isset($_GET['add_to_wishlist'])) {
     $productId = $_GET['add_to_wishlist'];
     addToWishlist($productId);
 }
-
 // Close database connection
 $conn->close();
 ?>

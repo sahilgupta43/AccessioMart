@@ -1,10 +1,10 @@
 <?php
-    // Include database connection and start session
+    // Include database connection
     include('include/connectdb.php');
 
-    // Function to fetch all orders from database
-    function fetchUsers($conn) {
-        $selectQuery = "SELECT userid, name, email, phone FROM customers";
+    // Function to fetch all newsletter subscriptions from database
+    function fetchSubscriptions($conn) {
+        $selectQuery = "SELECT id, email FROM newsletter_subscriptions";
         $result = $conn->query($selectQuery);
 
         if ($result->num_rows > 0) {
@@ -14,8 +14,8 @@
         }
     }
 
-    // Fetch all orders
-    $users = fetchUsers($conn);
+    // Fetch all subscriptions
+    $subscriptions = fetchSubscriptions($conn);
 ?>
 
 <!DOCTYPE html>
@@ -23,7 +23,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Users</title>
+    <title>Newsletter Subscriptions</title>
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
@@ -34,7 +34,7 @@
             background-color: #f4f4f9;
         }
 
-        .user-table {
+        .subscription-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
@@ -44,34 +44,26 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        .user-table th,
-        .user-table td {
+        .subscription-table th,
+        .subscription-table td {
             border: 1px solid #ddd;
             padding: 12px;
             text-align: left;
         }
 
-        .user-table th {
+        .subscription-table th {
             background-color: #007bff;
             color: white;
             font-weight: bold;
         }
 
-        .user-table td {
+        .subscription-table td {
             background-color: #f9f9f9;
         }
 
-        .user-table td img {
-            max-width: 50px;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-        }
-
-        .user-table td:last-child {
+        .subscription-table td:last-child {
             text-align: center;
         }
-
     </style>
 </head>
 <body>
@@ -93,32 +85,28 @@
     </div>
 
     <div class="main-content">
-        <h2>Users</h2>
+        <h2>Newsletter Subscriptions</h2>
 
-        <!-- Users Table -->
-        <div class="users-table">
-            <table id="userTable" class="user-table">
+        <!-- Subscriptions Table -->
+        <div class="subscriptions-table">
+            <table id="subscriptionTable" class="subscription-table">
                 <thead>
                     <tr>
-                        <th>User ID</th>
-                        <th>Name</th>
+                        <th>ID</th>
                         <th>Email</th>
-                        <th>Phone Number</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($users as $user): ?>
+                    <?php foreach ($subscriptions as $subscription): ?>
                         <tr>
-                            <td><?php echo $user['userid']; ?></td>
-                            <td><?php echo $user['name']; ?></td>
-                            <td><?php echo $user['email']; ?></td>
-                            <td><?php echo $user['phone']; ?></td>
+                            <td><?php echo $subscription['id']; ?></td>
+                            <td><?php echo $subscription['email']; ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
-
+    </div>
 </body>
 </html>
 
