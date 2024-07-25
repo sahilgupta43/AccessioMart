@@ -37,7 +37,7 @@ function displayCheckout()
             // eSewa payment configuration
             $esewa_merchant_code = 'EPAYTEST';
             $success_url = 'http://localhost/accessiomart/pursuccess.php'; // URL where eSewa redirects after successful payment
-            $failure_url = 'http://localhost/accessiomart/cart.php'; // URL where eSewa redirects after failed payment
+            $failure_url = 'http://localhost/accessiomart/failure.php'; // URL where eSewa redirects after failed payment
 
             // Generate a unique order ID
             do {
@@ -94,12 +94,7 @@ function displayCheckout()
 }
 
 // Handle the checkout process
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    displayCheckout();
-} else {
-    displayCheckout();
-}
-
+displayCheckout();
 ?>
 
 <!DOCTYPE html>
