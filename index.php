@@ -26,7 +26,6 @@ $userID = $_SESSION['userid'];
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
     <style>
-
         /* Newsletter Section Styles */
         #newsletter {
             padding: 50px 0;
@@ -82,39 +81,8 @@ $userID = $_SESSION['userid'];
             border-radius: 5px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             z-index: 1000;
-        }
-  /* Detail Popup Styles */
-  #detail-popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 20px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            z-index: 1001;
-            max-width: 400px;
-            width: 100%;
-        }
-
-        #detail-popup button {
-            display: block;
-            margin: 0 auto;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
             cursor: pointer;
         }
-
-        #detail-popup button:hover {
-            background-color: #0056b3;
-        }
-
     </style>
 </head>
 <body>
@@ -168,12 +136,6 @@ $userID = $_SESSION['userid'];
     <!-- Popup Message -->
     <div id="popup-message"></div>
 
-     <!-- Detail Popup -->
-     <div id="detail-popup">
-        <p id="offer-detail"></p>
-        <button id="close-detail-popup">Close</button>
-    </div>
-
     <script>
         document.getElementById('newsletter-form').addEventListener('submit', function(event) {
             event.preventDefault();
@@ -215,40 +177,6 @@ $userID = $_SESSION['userid'];
             });
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            fetch('offer.php')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.length > 0) {
-                        const popupMessage = document.getElementById('popup-message');
-                        popupMessage.textContent = `Exclusive Offer: ${data[0].offer_name}`;
-                        popupMessage.style.display = 'block';
-                        popupMessage.addEventListener('click', function() {
-                            showDetailPopup(data[0]);
-                        });
-
-                        setTimeout(() => {
-                            popupMessage.style.display = 'none';
-                        }, 5000); // Hide after 5 seconds
-                    }
-                })
-                .catch(error => console.error('Error fetching offers:', error));
-        });
-
-        function showDetailPopup(offer) {
-            const detailPopup = document.getElementById('detail-popup');
-            const offerDetail = document.getElementById('offer-detail');
-            offerDetail.textContent = `Offer: ${offer.offer_name}\nCoupon Code: ${offer.coupon_code}`;
-            detailPopup.style.display = 'block';
-
-            document.getElementById('close-detail-popup').addEventListener('click', function() {
-                detailPopup.style.display = 'none';
-            });
-
-            setTimeout(() => {
-                detailPopup.style.display = 'none';
-            }, 30000); // Hide after 30 seconds
-        }
     </script>
 
     <?php include('include/footer.php'); ?>
