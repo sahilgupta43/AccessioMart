@@ -132,7 +132,7 @@ if (!empty($query)) {
                         <img src="admin/<?php echo htmlspecialchars($row['pimage']); ?>" alt="<?php echo htmlspecialchars($row['pname']); ?>">
                         <h2><?php echo htmlspecialchars($row['pname']); ?></h2>
                         <p><?php echo htmlspecialchars($row['description']); ?></p>
-                        <p class="price">Price: $<?php echo htmlspecialchars($row['price']); ?></p>
+                        <p class="price">Price: NPR<?php echo htmlspecialchars($row['price']); ?></p>
                         <button>Add to Cart</button>
                     </a>
                 <?php endwhile; ?>
