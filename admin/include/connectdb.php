@@ -1,8 +1,5 @@
 <?php
 // Check if a session is already started before starting a new session
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
 
 // Database credentials
 $servername = "localhost";
