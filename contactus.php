@@ -1,4 +1,9 @@
-<?php include('include/header.php') ?>
+<?php 
+session_start(); // Start or resume the session
+$userID = $_SESSION['userid'];
+include('include/header.php');
+
+?>
 
 <!DOCTYPE html>
 <html lang="en">

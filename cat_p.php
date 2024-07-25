@@ -1,5 +1,7 @@
 <?php
 // Include database connection and header
+session_start(); // Start or resume the session
+$userID = $_SESSION['userid'];
 include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 include('include/without.php');
 
@@ -92,7 +94,7 @@ $conn->close();
         <img src="admin/<?php echo htmlspecialchars($product['pimage']); ?>" alt="<?php echo htmlspecialchars($product['pname']); ?>" class="product-image">
         <div class="product-name"><?php echo htmlspecialchars($product['pname']); ?></div>
         <div class="product-price">NPR<?php echo htmlspecialchars($product['price']); ?></div>
-        <form action="cart.php" method="POST">
+        <form action="add_to_cart.php" method="POST">
             <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($product['pid']); ?>">
             <button type="submit" class="button add-to-cart">Add to Cart</button>
         </form>

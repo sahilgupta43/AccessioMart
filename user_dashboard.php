@@ -9,6 +9,10 @@ if (!isset($_SESSION['userid'])) {
 
 include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
 // Include header without session_start() inside it
 include('include/without.php');
 
@@ -17,11 +21,13 @@ $userID = $_SESSION['userid']; // Get user ID from session
 // SQL query to select user data
 $sql = "SELECT userid, name, email, phone FROM customers WHERE userid = ?";
 $stmt = $conn->prepare($sql);
+if (!$stmt) {
+    die("Prepare failed: " . $conn->error);
+}
 $stmt->bind_param("i", $userID);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
-
 $stmt->close();
 
 // SQL query to fetch user orders
@@ -30,11 +36,18 @@ $orderSql = "SELECT o.orderid, o.pid, p.pname, p.pimage, o.quantity, o.price, o.
              JOIN products p ON o.pid = p.pid
              WHERE o.userid = ?";
 $orderStmt = $conn->prepare($orderSql);
+if (!$orderStmt) {
+    die("Prepare failed: " . $conn->error);
+}
 $orderStmt->bind_param("i", $userID);
 $orderStmt->execute();
 $orderResult = $orderStmt->get_result();
-$orders = $orderResult->fetch_all(MYSQLI_ASSOC);
 
+if ($orderResult->num_rows > 0) {
+    $orders = $orderResult->fetch_all(MYSQLI_ASSOC);
+} else {
+    $orders = [];
+}
 $orderStmt->close();
 $conn->close();
 ?>
@@ -163,22 +176,28 @@ $conn->close();
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($orders as $order): ?>
+        <?php if (!empty($orders)): ?>
+            <?php foreach ($orders as $order): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($order['orderid']); ?></td>
+                    <td><?php echo htmlspecialchars($order['pid']); ?></td>
+                    <td><?php echo htmlspecialchars($order['pname']); ?></td>
+                    <td><img src="<?php echo htmlspecialchars($order['pimage']); ?>" alt="Product Image"></td>
+                    <td><?php echo htmlspecialchars($order['quantity']); ?></td>
+                    <td><?php echo htmlspecialchars($order['price']); ?></td>
+                    <td><?php echo htmlspecialchars($order['totalprice']); ?></td>
+                    <td>
+                        <span class="status-display">
+                            <?php echo htmlspecialchars($order['status']); ?>
+                        </span>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        <?php else: ?>
             <tr>
-                <td><?php echo htmlspecialchars($order['orderid']); ?></td>
-                <td><?php echo htmlspecialchars($order['pid']); ?></td>
-                <td><?php echo htmlspecialchars($order['pname']); ?></td>
-                <td><img src="<?php echo htmlspecialchars($order['pimage']); ?>" alt="Product Image"></td>
-                <td><?php echo htmlspecialchars($order['quantity']); ?></td>
-                <td><?php echo htmlspecialchars($order['price']); ?></td>
-                <td><?php echo htmlspecialchars($order['totalprice']); ?></td>
-                <td>
-                    <span class="status-display">
-                        <?php echo htmlspecialchars($order['status']); ?>
-                    </span>
-                </td>
+                <td colspan="8" style="text-align: center;">No orders found.</td>
             </tr>
-        <?php endforeach; ?>
+        <?php endif; ?>
     </tbody>
 </table>
 

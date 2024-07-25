@@ -1,4 +1,7 @@
 <?php
+session_start(); // Start or resume the session
+$userID = $_SESSION['userid'];
+
 include ('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 include ('include/without.php');
 

@@ -1,5 +1,22 @@
-<?php include('include/header.php') ?>
+<?php 
+session_start(); // Start or resume the session
 
+// Check if the user is signed in
+if (!isset($_SESSION['userid'])) {
+    header("Location: signin.php");
+    exit();
+}
+
+include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+include('include/without.php') ;
+$userID = $_SESSION['userid'];
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

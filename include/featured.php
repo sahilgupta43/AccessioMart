@@ -1,6 +1,14 @@
 <?php
+// Start output buffering
+ob_start();
+
 // Include database connection
 include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
+
+// Start session if not already started
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Fetch products with category name 'laptop'
 $selectQuery = "SELECT p.pid, p.pname, p.price, p.pimage
@@ -45,7 +53,18 @@ function addToCart($productId) {
                 'quantity' => 1,
             );
         }
-    } 
+    } else {
+        // Handle the case where the user is not logged in
+        // You might want to redirect them to the login page or show a message
+        header("Location: signin.php");
+        exit();
+    }
+}
+
+// Check if 'add_to_cart' parameter is set (simulating a form submission or button click)
+if (isset($_GET['add_to_cart'])) {
+    $productId = $_GET['add_to_cart'];
+    addToCart($productId);
 }
 
 // Function to add product to wishlist
@@ -53,20 +72,10 @@ function addToWishlist($productId) {
     $_SESSION['wishlist'][$productId] = true;
 }
 
-// Handle add to cart action
-if (isset($_GET['add_to_cart'])) {
-    $productId = $_GET['add_to_cart'];
-    addToCart($productId);
-    header("Location: " . $_SERVER['PHP_SELF']); // Redirect to the same page to avoid resubmission
-    exit();
-}
-
-// Handle add to wishlist action
+// Check if 'add_to_wishlist' parameter is set (simulating a form submission or button click)
 if (isset($_GET['add_to_wishlist'])) {
     $productId = $_GET['add_to_wishlist'];
     addToWishlist($productId);
-    header("Location: " . $_SERVER['PHP_SELF']); // Redirect to the same page to avoid resubmission
-    exit();
 }
 
 // Close database connection
