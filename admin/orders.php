@@ -122,31 +122,31 @@
 
     /* Popup styling */
     .popup {
-        display: none;
-        position: fixed;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        padding: 20px;
-        background-color: white;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        z-index: 1000;
-    }
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
 
-    .popup button {
-        background-color: #007bff;
-        color: white;
-        padding: 5px 10px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
+        .popup button {
+            background-color: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
 
-    .popup button:hover {
-        background-color: #0056b3;
-    }
+        .popup button:hover {
+            background-color: #0056b3;
+        }
 </style>
 
     </style>
@@ -174,52 +174,50 @@
 
         <!-- Orders Table -->
         <div class="orders-table">
-            <table id="orderTable" class="order-table"><thead>
-    <tr>
-        <th>Order ID</th>
-        <th>User ID</th>
-        <th>Name</th>
-        <th>Product ID</th>
-        <th>Product Name</th>
-        <th>Product Image</th>
-        <th>Price</th>
-        <th>Quantity</th>
-        <th>Total Price</th>
-        <th>Status</th>
-        <th>Action</th> <!-- Update action column -->
-    </tr>
-</thead>
-<tbody>
-    <?php foreach ($orders as $order): ?>
-        <tr>
-            <td><?php echo $order['orderid']; ?></td>
-            <td><?php echo $order['userid']; ?></td>
-            <td><?php echo $order['name']; ?></td>
-            <td><?php echo $order['pid']; ?></td>
-            <td><?php echo $order['pname']; ?></td>
-            <td><img src="<?php echo $order['pimage']; ?>" alt="Product Image" width="50"></td>
-            <td><?php echo $order['price']; ?></td>
-            <td><?php echo $order['quantity']; ?></td>
-            <td><?php echo $order['totalprice']; ?></td>
-            <td>
-                <form class="status-form" action="update_status.php" method="POST">
-                    <input type="hidden" name="order_id" value="<?php echo $order['orderid']; ?>">
-                    <select name="status">
-                        <option value="Order Placed" <?php echo $order['status'] === 'Order Placed' ? 'selected' : ''; ?>>Order Placed</option>
-                        <option value="Shipping" <?php echo $order['status'] === 'Shipping' ? 'selected' : ''; ?>>Shipping</option>
-                        <option value="Delivered" <?php echo $order['status'] === 'Delivered' ? 'selected' : ''; ?>>Delivered</option>
-                    </select>
-                </form>
-            </td>
-            <td>
-                <button class="update-btn" onclick="updateOrder('<?php echo $order['orderid']; ?>')">Update</button>
-            </td>
-        </tr>
-    <?php endforeach; ?>
-</tbody>
-
-
-
+            <table id="orderTable" class="order-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>User ID</th>
+                        <th>Name</th>
+                        <th>Product ID</th>
+                        <th>Product Name</th>
+                        <th>Product Image</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total Price</th>
+                        <th>Status</th>
+                        <th>Action</th> <!-- Update action column -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($orders as $order): ?>
+                        <tr>
+                            <td><?php echo $order['orderid']; ?></td>
+                            <td><?php echo $order['userid']; ?></td>
+                            <td><?php echo $order['name']; ?></td>
+                            <td><?php echo $order['pid']; ?></td>
+                            <td><?php echo $order['pname']; ?></td>
+                            <td><img src="<?php echo $order['pimage']; ?>" alt="Product Image" width="50"></td>
+                            <td><?php echo $order['price']; ?></td>
+                            <td><?php echo $order['quantity']; ?></td>
+                            <td><?php echo $order['totalprice']; ?></td>
+                            <td>
+                                <form id="status-form-<?php echo $order['orderid']; ?>" class="status-form" action="update_status.php" method="POST">
+                                    <input type="hidden" name="order_id" value="<?php echo $order['orderid']; ?>">
+                                    <select name="status">
+                                        <option value="Order Placed" <?php echo $order['status'] === 'Order Placed' ? 'selected' : ''; ?>>Order Placed</option>
+                                        <option value="Shipping" <?php echo $order['status'] === 'Shipping' ? 'selected' : ''; ?>>Shipping</option>
+                                        <option value="Delivered" <?php echo $order['status'] === 'Delivered' ? 'selected' : ''; ?>>Delivered</option>
+                                    </select>
+                                </form>
+                            </td>
+                            <td>
+                                <button class="update-btn" onclick="updateOrder('<?php echo $order['orderid']; ?>')">Update</button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
             </table>
         </div>
 
@@ -241,36 +239,36 @@
             });
         });
 
-        //popup
-
+        // Update Order function
         function updateOrder(orderId) {
-        // Submit the form
-        var form = document.querySelector('.status-form');
-        form.action = 'update_status.php'; // Ensure the form is pointed to the correct action
-        form.submit();
+            // Find the form for the specific order
+            var form = document.getElementById('status-form-' + orderId);
+            if (form) {
+                form.submit();
+                
+                // Show the popup message
+                var popup = document.createElement('div');
+                popup.className = 'popup';
+                popup.innerHTML = `
+                    <p>Update Successfully</p>
+                    <button onclick="closePopup()">OK</button>
+                `;
+                document.body.appendChild(popup);
+                popup.style.display = 'block';
 
-        // Show the popup message
-        var popup = document.createElement('div');
-        popup.className = 'popup';
-        popup.innerHTML = `
-            <p>Update Successfully</p>
-            <button onclick="closePopup()">OK</button>
-        `;
-        document.body.appendChild(popup);
-        popup.style.display = 'block';
-
-        // Automatically close the popup after 5 seconds
-        setTimeout(function() {
-            closePopup();
-        }, 5000); // 5000 milliseconds = 5 seconds
-    }
-
-    function closePopup() {
-        var popup = document.querySelector('.popup');
-        if (popup) {
-            document.body.removeChild(popup);
+                // Automatically close the popup after 5 seconds
+                setTimeout(function() {
+                    closePopup();
+                }, 5000); // 5000 milliseconds = 5 seconds
+            }
         }
-    }
+
+        function closePopup() {
+            var popup = document.querySelector('.popup');
+            if (popup) {
+                document.body.removeChild(popup);
+            }
+        }
     </script>
 </body>
 </html>

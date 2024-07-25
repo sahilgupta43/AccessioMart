@@ -31,7 +31,7 @@ $user = $result->fetch_assoc();
 $stmt->close();
 
 // SQL query to fetch user orders
-$orderSql = "SELECT o.orderid, o.pid, p.pname, p.pimage, o.quantity, o.price, o.totalprice, o.status
+$orderSql = "SELECT o.orderid, o.pid, p.pname, o.pimage, o.quantity, o.price, o.totalprice, o.status
              FROM orders o
              JOIN products p ON o.pid = p.pid
              WHERE o.userid = ?";
@@ -60,33 +60,61 @@ $conn->close();
     <title>User Dashboard</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        /* Unique styling for the user dashboard */
-        .dashboard-header {
-            text-align: center;
-            margin-top: 20px;
+        /* Unique styling for the user dashboard - specific to main content */
+        .main-content {
+            padding: 20px;
+            font-family: Arial, sans-serif;
         }
 
-        .navbar {
+        .dashboard-header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px;
+        }
+
+        .dashboard-header {
+            margin: 0;
+        }
+
+        .logout-button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .logout-button:hover {
+            background-color: #0056b3;
+        }
+
+        .navbar-user {
             display: flex;
             justify-content: center;
-            background-color: #007bff;
             padding: 10px;
         }
 
-        .navbar a {
+        .navbar-user a {
             color: white;
             padding: 14px 20px;
             text-decoration: none;
             text-align: center;
+            border: 2px solid green;
+            background-color: #2b2b1f;
+            border-radius: 14px;
+            margin: 2px;
         }
 
-        .navbar a:hover {
+        .navbar-user a:hover {
             background-color: #0056b3;
         }
 
         .content-section {
             display: none;
-            margin: 20px;
+            margin: 20px 0;
         }
 
         .content-section.active {
@@ -111,26 +139,6 @@ $conn->close();
             background-color: #f2f2f2;
         }
 
-        .logout-button {
-            display: block;
-            width: 120px;
-            margin: 20px auto;
-            text-align: center;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            position: absolute;
-            right: 10px;
-            top: 20px;
-        }
-
-        .logout-button:hover {
-            background-color: #0056b3;
-        }
-
-        /* Styles for the orders table */
         .orders-table {
             width: 90%;
             margin: 20px auto;
@@ -161,7 +169,6 @@ $conn->close();
             text-align: center;
         }
 
-        /* CSS for status display */
         .status-display {
             padding: 5px;
             border-radius: 4px;
@@ -173,7 +180,9 @@ $conn->close();
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 400px;
         }
 
         .form-group label {
@@ -185,11 +194,12 @@ $conn->close();
             width: 100%;
             padding: 8px;
             box-sizing: border-box;
+            border-radius: 4px;
+            border: 1px solid #ddd;
         }
 
         .update-button {
             display: block;
-            width: 100%;
             padding: 10px;
             background-color: #007bff;
             color: white;
@@ -197,6 +207,7 @@ $conn->close();
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            margin: 20px auto;
         }
 
         .update-button:hover {
@@ -208,81 +219,106 @@ $conn->close();
             text-align: center;
             margin-top: 20px;
         }
+
+        .error-message {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .message {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 16px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .message.success {
+            color: green;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+        .message.error {
+            color: red;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
     </style>
     <script>
         function showSection(sectionId) {
-            // Hide all sections
             var sections = document.getElementsByClassName('content-section');
             for (var i = 0; i < sections.length; i++) {
                 sections[i].classList.remove('active');
             }
-
-            // Show the selected section
             document.getElementById(sectionId).classList.add('active');
         }
 
-        // Show the "User Information" section by default
         document.addEventListener('DOMContentLoaded', function() {
             showSection('user-info');
         });
+
         function validatePassword(password) {
-    var pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return pattern.test(password);
-}
-
-function updatePassword() {
-    var currentPassword = document.getElementById('current-password').value;
-    var newPassword = document.getElementById('new-password').value;
-    var confirmNewPassword = document.getElementById('confirm-new-password').value;
-    var errorMessage = document.getElementById('error-message');
-    var successMessage = document.getElementById('success-message');
-
-    if (newPassword !== confirmNewPassword) {
-        errorMessage.textContent = 'New passwords do not match.';
-        return false;
-    }
-
-    if (!validatePassword(newPassword)) {
-        errorMessage.textContent = 'Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.';
-        return false;
-    }
-
-    // Perform AJAX request to update password
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'update_password.php', true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            if (xhr.responseText === 'success') {
-                successMessage.textContent = 'Successfully changed password.';
-                errorMessage.textContent = '';
-            } else {
-                errorMessage.textContent = xhr.responseText;
-                successMessage.textContent = '';
-            }
+            var pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            return pattern.test(password);
         }
-    };
-    xhr.send('current_password=' + encodeURIComponent(currentPassword) + '&new_password=' + encodeURIComponent(newPassword));
 
-    return false;
-}
+        function updatePassword() {
+            var currentPassword = document.getElementById('current-password').value;
+            var newPassword = document.getElementById('new-password').value;
+            var confirmNewPassword = document.getElementById('confirm-new-password').value;
+            var errorMessage = document.getElementById('error-message');
+            var successMessage = document.getElementById('success-message');
 
+            if (newPassword !== confirmNewPassword) {
+                errorMessage.textContent = 'New passwords do not match.';
+                return false;
+            }
+
+            if (!validatePassword(newPassword)) {
+                errorMessage.textContent = 'Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.';
+                return false;
+            }
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'update_password.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    if (xhr.responseText === 'success') {
+                        successMessage.textContent = 'Password successfully changed.';
+                    } else {
+                        errorMessage.textContent = xhr.responseText;
+                    }
+                } else {
+                    errorMessage.textContent = 'An error occurred while updating the password.';
+                }
+            };
+            xhr.send('current_password=' + encodeURIComponent(currentPassword) + '&new_password=' + encodeURIComponent(newPassword));
+        }
+
+        
     </script>
 </head>
 <body>
-
-<div class="main-content">
-    <h2 class="dashboard-header">Welcome, <?php echo htmlspecialchars($user['name']); ?></h2>
-
-    <div class="navbar">
-        <a href="javascript:void(0)" onclick="showSection('user-info')">User Information</a>
-        <a href="javascript:void(0)" onclick="showSection('orders')">Orders</a>
-        <a href="javascript:void(0)" onclick="showSection('manage-password')">Manage Password</a>
-        <a href="javascript:void(0)" onclick="showSection('delete-account')">Delete Account</a>
+    <div class="dashboard-header-container">
+        <h1 class="dashboard-header">Welcome, <?php echo htmlspecialchars($user['name']); ?></h1>
+        <a href="logout.php" class="logout-button">Logout</a>
     </div>
 
-    <div id="user-info" class="content-section active">
-        <h3 class="dashboard-header">User Information</h3>
+    <div class="navbar-user">
+        <a href="javascript:void(0);" onclick="showSection('user-info')">User Information</a>
+        <a href="javascript:void(0);" onclick="showSection('orders')">Orders</a>
+        <a href="javascript:void(0);" onclick="showSection('manage-password')">Manage Password</a>
+        <a href="delete_account.php" onclick="return confirm('Are you sure you want to delete your account?');">Delete Account</a>
+    </div>
+
+    <?php if (isset($_GET['message'])): ?>
+        <div class="message success"><?php echo htmlspecialchars($_GET['message']); ?></div>
+    <?php elseif (isset($_GET['error'])): ?>
+        <div class="message error"><?php echo htmlspecialchars($_GET['error']); ?></div>
+    <?php endif; ?>
+
+    <div id="user-info" class="content-section">
         <table class="user-info-table">
             <tr>
                 <th>Name</th>
@@ -300,9 +336,8 @@ function updatePassword() {
     </div>
 
     <div id="orders" class="content-section">
-        <h3 class="dashboard-header">Your Orders</h3>
-        <table class="orders-table">
-            <thead>
+        <?php if (count($orders) > 0): ?>
+            <table class="orders-table">
                 <tr>
                     <th>Order ID</th>
                     <th>Product ID</th>
@@ -313,64 +348,41 @@ function updatePassword() {
                     <th>Total Price</th>
                     <th>Status</th>
                 </tr>
-            </thead>
-            <tbody>
-                <?php if (!empty($orders)): ?>
-                    <?php foreach ($orders as $order): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($order['orderid']); ?></td>
-                            <td><?php echo htmlspecialchars($order['pid']); ?></td>
-                            <td><?php echo htmlspecialchars($order['pname']); ?></td>
-                            <td><img src="<?php echo htmlspecialchars($order['pimage']); ?>" alt="Product Image"></td>
-                            <td><?php echo htmlspecialchars($order['quantity']); ?></td>
-                            <td><?php echo htmlspecialchars($order['price']); ?></td>
-                            <td><?php echo htmlspecialchars($order['totalprice']); ?></td>
-                            <td>
-                                <span class="status-display">
-                                    <?php echo htmlspecialchars($order['status']); ?>
-                                </span>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
+                <?php foreach ($orders as $order): ?>
                     <tr>
-                        <td colspan="8" style="text-align: center;">No orders found.</td>
+                        <td><?php echo htmlspecialchars($order['orderid']); ?></td>
+                        <td><?php echo htmlspecialchars($order['pid']); ?></td>
+                        <td><?php echo htmlspecialchars($order['pname']); ?></td>
+                        <td><img src="<?php echo htmlspecialchars($order['pimage']); ?>" alt="<?php echo htmlspecialchars($order['pname']); ?>"></td>
+                        <td><?php echo htmlspecialchars($order['quantity']); ?></td>
+                        <td><?php echo htmlspecialchars($order['price']); ?></td>
+                        <td><?php echo htmlspecialchars($order['totalprice']); ?></td>
+                        <td><span class="status-display"><?php echo htmlspecialchars($order['status']); ?></span></td>
                     </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                <?php endforeach; ?>
+            </table>
+        <?php else: ?>
+            <p>No orders found.</p>
+        <?php endif; ?>
     </div>
 
     <div id="manage-password" class="content-section">
-        <h3 class="dashboard-header">Manage Password</h3>
-        <form onsubmit="return updatePassword();">
-            <div class="form-group">
-                <label for="current-password">Current Password</label>
-                <input type="password" id="current-password" name="current_password" required>
-            </div>
-            <div class="form-group">
-                <label for="new-password">New Password</label>
-                <input type="password" id="new-password" name="new_password" required>
-            </div>
-            <div class="form-group">
-                <label for="confirm-new-password">Confirm New Password</label>
-                <input type="password" id="confirm-new-password" name="confirm_new_password" required>
-            </div>
-            <button type="submit" class="update-button">Update Password</button>
-            <div id="error-message" class="error-message"></div>
-            <div id="success-message" class="success-message"></div>
-        </form>
+        <div id="error-message" class="error-message"></div>
+        <div id="success-message" class="success-message"></div>
+        <div class="form-group">
+            <label for="current-password">Current Password</label>
+            <input type="password" id="current-password" name="current-password" required>
+        </div>
+        <div class="form-group">
+            <label for="new-password">New Password</label>
+            <input type="password" id="new-password" name="new-password" required>
+        </div>
+        <div class="form-group">
+            <label for="confirm-new-password">Confirm New Password</label>
+            <input type="password" id="confirm-new-password" name="confirm-new-password" required>
+        </div>
+        <button class="update-button" onclick="updatePassword()">Update Password</button>
     </div>
-
-    <div id="delete-account" class="content-section">
-        <h3 class="dashboard-header">Delete Account</h3>
-        <!-- Add your form or functionality for deleting the account here -->
-    </div>
-
-    <a href="logout.php" class="logout-button">Logout</a>
-</div>
-
-<?php include('include/footer.php'); ?>
-
+    <?php include('include/footer.php') ?>
 </body>
 </html>
