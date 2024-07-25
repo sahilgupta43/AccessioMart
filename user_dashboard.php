@@ -66,6 +66,33 @@ $conn->close();
             margin-top: 20px;
         }
 
+        .navbar {
+            display: flex;
+            justify-content: center;
+            background-color: #007bff;
+            padding: 10px;
+        }
+
+        .navbar a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .navbar a:hover {
+            background-color: #0056b3;
+        }
+
+        .content-section {
+            display: none;
+            margin: 20px;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
         .user-info-table {
             width: 60%;
             margin: 20px auto;
@@ -142,66 +169,112 @@ $conn->close();
             text-align: center;
         }
     </style>
+    <script>
+        function showSection(sectionId) {
+            // Hide all sections
+            var sections = document.getElementsByClassName('content-section');
+            for (var i = 0; i < sections.length; i++) {
+                sections[i].classList.remove('active');
+            }
+
+            // Show the selected section
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        // Show the "User Information" section by default
+        document.addEventListener('DOMContentLoaded', function() {
+            showSection('user-info');
+        });
+    </script>
 </head>
 <body>
 
-<h2 class="dashboard-header">Welcome, <?php echo htmlspecialchars($user['name']); ?></h2>
-<table class="user-info-table">
-    <tr>
-        <th>Name</th>
-        <td><?php echo htmlspecialchars($user['name']); ?></td>
-    </tr>
-    <tr>
-        <th>Email</th>
-        <td><?php echo htmlspecialchars($user['email']); ?></td>
-    </tr>
-    <tr>
-        <th>Phone</th>
-        <td><?php echo htmlspecialchars($user['phone']); ?></td>
-    </tr>
-</table>
 
-<h3 class="dashboard-header">Your Orders</h3>
-<table class="orders-table">
-    <thead>
-        <tr>
-            <th>Order ID</th>
-            <th>Product ID</th>
-            <th>Product Name</th>
-            <th>Product Image</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Total Price</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php if (!empty($orders)): ?>
-            <?php foreach ($orders as $order): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($order['orderid']); ?></td>
-                    <td><?php echo htmlspecialchars($order['pid']); ?></td>
-                    <td><?php echo htmlspecialchars($order['pname']); ?></td>
-                    <td><img src="<?php echo htmlspecialchars($order['pimage']); ?>" alt="Product Image"></td>
-                    <td><?php echo htmlspecialchars($order['quantity']); ?></td>
-                    <td><?php echo htmlspecialchars($order['price']); ?></td>
-                    <td><?php echo htmlspecialchars($order['totalprice']); ?></td>
-                    <td>
-                        <span class="status-display">
-                            <?php echo htmlspecialchars($order['status']); ?>
-                        </span>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        <?php else: ?>
+
+<div class="main-content">
+    <h2 class="dashboard-header">Welcome, <?php echo htmlspecialchars($user['name']); ?></h2>
+
+    <div class="navbar">
+        <a href="javascript:void(0)" onclick="showSection('user-info')">User Information</a>
+        <a href="javascript:void(0)" onclick="showSection('orders')">Orders</a>
+        <a href="javascript:void(0)" onclick="showSection('manage-password')">Manage Password</a>
+        <a href="javascript:void(0)" onclick="showSection('delete-account')">Delete Account</a>
+    </div>
+
+    <div id="user-info" class="content-section active">
+        <h3 class="dashboard-header">User Information</h3>
+        <table class="user-info-table">
             <tr>
-                <td colspan="8" style="text-align: center;">No orders found.</td>
+                <th>Name</th>
+                <td><?php echo htmlspecialchars($user['name']); ?></td>
             </tr>
-        <?php endif; ?>
-    </tbody>
-</table>
+            <tr>
+                <th>Email</th>
+                <td><?php echo htmlspecialchars($user['email']); ?></td>
+            </tr>
+            <tr>
+                <th>Phone</th>
+                <td><?php echo htmlspecialchars($user['phone']); ?></td>
+            </tr>
+        </table>
+    </div>
 
-<a href="logout.php" class="logout-button">Logout</a>
+    <div id="orders" class="content-section">
+        <h3 class="dashboard-header">Your Orders</h3>
+        <table class="orders-table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Product Image</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total Price</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($orders)): ?>
+                    <?php foreach ($orders as $order): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($order['orderid']); ?></td>
+                            <td><?php echo htmlspecialchars($order['pid']); ?></td>
+                            <td><?php echo htmlspecialchars($order['pname']); ?></td>
+                            <td><img src="<?php echo htmlspecialchars($order['pimage']); ?>" alt="Product Image"></td>
+                            <td><?php echo htmlspecialchars($order['quantity']); ?></td>
+                            <td><?php echo htmlspecialchars($order['price']); ?></td>
+                            <td><?php echo htmlspecialchars($order['totalprice']); ?></td>
+                            <td>
+                                <span class="status-display">
+                                    <?php echo htmlspecialchars($order['status']); ?>
+                                </span>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="8" style="text-align: center;">No orders found.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="manage-password" class="content-section">
+        <h3 class="dashboard-header">Manage Password</h3>
+        <!-- Add your form or functionality for managing the password here -->
+    </div>
+
+    <div id="delete-account" class="content-section">
+        <h3 class="dashboard-header">Delete Account</h3>
+        <!-- Add your form or functionality for deleting the account here -->
+    </div>
+
+    <a href="logout.php" class="logout-button">Logout</a>
+</div>
+
+<?php include('include/footer.php'); ?>
 
 </body>
 </html>
