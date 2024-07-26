@@ -17,21 +17,21 @@
             <div class="footer-column">
                 <h3>Social Links</h3>
                 <ul>
-                    <li><a href="#"><i class="fa fa-facebook"></i> Facebook</a></li>
-                    <li><a href="#"><i class="fa fa-twitter"></i> Twitter</a></li>
-                    <li><a href="#"><i class="fa fa-instagram"></i> Instagram</a></li>
-                    <li><a href="#"><i class="fa fa-linkedin"></i> LinkedIn</a></li>
-                    <li><a href="#"><i class="fa fa-youtube"></i> YouTube</a></li>
+                    <li><a href="https://www.facebook.com/accessiomart"><i class="fa fa-facebook"></i> Facebook</a></li>
+                    <li><a href="https://www.twitter.com/accessiomart"><i class="fa fa-twitter"></i> Twitter</a></li>
+                    <li><a href="https://www.instagram.com/accessiomart"><i class="fa fa-instagram"></i> Instagram</a></li>
+                    <li><a href="https://www.linkedin.com/accessiomart"><i class="fa fa-linkedin"></i> LinkedIn</a></li>
+                    <li><a href="https://www.youtube.com/accessiomart"><i class="fa fa-youtube"></i> YouTube</a></li>
                 </ul>
             </div>
             <div class="footer-column">
                 <h3>Links</h3>
                 <ul>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Return Policy</a></li>
-                    <li><a href="#">Shipping Information</a></li>
+                    <li><a href="privacy_policy.php">Privacy Policy</a></li>
+                    <li><a href="return_policy.php">Return Policy</a></li>
+                    <li><a href="shipping.php">Shipping Information</a></li>
                     <li><a href="terms.php">Terms & Conditions</a></li>
-                    <li><a href="#">Help & Support</a></li>
+                    <li><a href="help.php">Help & Support</a></li>
                 </ul>
             </div>
             <div class="footer-column">
