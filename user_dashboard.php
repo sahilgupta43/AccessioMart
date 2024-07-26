@@ -58,7 +58,7 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="styles.css">
     <style>
         /* Unique styling for the user dashboard - specific to main content */
         .main-content {
@@ -244,6 +244,60 @@ $conn->close();
             border: 1px solid #f5c6cb;
         }
     </style>
+    <script>
+        function showSection(sectionId) {
+            var sections = document.getElementsByClassName('content-section');
+            for (var i = 0; i < sections.length; i++) {
+                sections[i].classList.remove('active');
+            }
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            showSection('user-info');
+        });
+
+        function validatePassword(password) {
+            var pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            return pattern.test(password);
+        }
+
+        function updatePassword() {
+            var currentPassword = document.getElementById('current-password').value;
+            var newPassword = document.getElementById('new-password').value;
+            var confirmNewPassword = document.getElementById('confirm-new-password').value;
+            var errorMessage = document.getElementById('error-message');
+            var successMessage = document.getElementById('success-message');
+
+            if (newPassword !== confirmNewPassword) {
+                errorMessage.textContent = 'New passwords do not match.';
+                return false;
+            }
+
+            if (!validatePassword(newPassword)) {
+                errorMessage.textContent = 'Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.';
+                return false;
+            }
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'update_password.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    if (xhr.responseText === 'success') {
+                        successMessage.textContent = 'Password successfully changed.';
+                    } else {
+                        errorMessage.textContent = xhr.responseText;
+                    }
+                } else {
+                    errorMessage.textContent = 'An error occurred while updating the password.';
+                }
+            };
+            xhr.send('current_password=' + encodeURIComponent(currentPassword) + '&new_password=' + encodeURIComponent(newPassword));
+        }
+
+        
+    </script>
 </head>
 <body>
     <div class="dashboard-header-container">
@@ -299,7 +353,7 @@ $conn->close();
                         <td><?php echo htmlspecialchars($order['orderid']); ?></td>
                         <td><?php echo htmlspecialchars($order['pid']); ?></td>
                         <td><?php echo htmlspecialchars($order['pname']); ?></td>
-                        <td><img src="admin/<?php echo htmlspecialchars($order['pimage']); ?>" alt="<?php echo htmlspecialchars($order['pname']); ?>"></td>
+                        <td><img src="<?php echo htmlspecialchars($order['pimage']); ?>" alt="<?php echo htmlspecialchars($order['pname']); ?>"></td>
                         <td><?php echo htmlspecialchars($order['quantity']); ?></td>
                         <td><?php echo htmlspecialchars($order['price']); ?></td>
                         <td><?php echo htmlspecialchars($order['totalprice']); ?></td>
@@ -329,7 +383,6 @@ $conn->close();
         </div>
         <button class="update-button" onclick="updatePassword()">Update Password</button>
     </div>
-    <script src="js/script.js"></script>
     <?php include('include/footer.php') ?>
 </body>
 </html>

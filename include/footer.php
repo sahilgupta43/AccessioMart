@@ -17,11 +17,11 @@
             <div class="footer-column">
                 <h3>Social Links</h3>
                 <ul>
-                    <li><a href="https://www.facebook.com/accessiomart"><i class="fa fa-facebook"></i> Facebook</a></li>
-                    <li><a href="https://www.twitter.com/accessiomart"><i class="fa fa-twitter"></i> Twitter</a></li>
-                    <li><a href="https://www.instagram.com/accessiomart"><i class="fa fa-instagram"></i> Instagram</a></li>
-                    <li><a href="https://www.linkedin.com/accessiomart"><i class="fa fa-linkedin"></i> LinkedIn</a></li>
-                    <li><a href="https://www.youtube.com/accessiomart"><i class="fa fa-youtube"></i> YouTube</a></li>
+                    <li><a href="#"><i class="fa fa-facebook"></i> Facebook</a></li>
+                    <li><a href="#"><i class="fa fa-twitter"></i> Twitter</a></li>
+                    <li><a href="#"><i class="fa fa-instagram"></i> Instagram</a></li>
+                    <li><a href="#"><i class="fa fa-linkedin"></i> LinkedIn</a></li>
+                    <li><a href="#"><i class="fa fa-youtube"></i> YouTube</a></li>
                 </ul>
             </div>
             <div class="footer-column">
@@ -46,7 +46,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 <a style="color: #fff" href="login.php">AccessioMart</a>. All Rights Reserved.</p>
+            <p>&copy; 2024 <a style="color: #fff" href="admin/login.php">AccessioMart</a>. All Rights Reserved.</p>
         </div>
     </footer>
 

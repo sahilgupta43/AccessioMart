@@ -94,7 +94,7 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Featured Products</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/styles.css"> 
+    <link rel="stylesheet" href="styles.css"> <!-- Your custom CSS file -->
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-5Stm0lMkPCjfkVoCO91XAKzjtbrblZxViID9opJKzXu3eFuXDEPSsCmU4CTnuCOG7oOWo6v9lWZ8aMPrzDc/Ow==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
