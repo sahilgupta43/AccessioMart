@@ -1,7 +1,6 @@
 <?php
 // Include database connection and header
 session_start(); // Start or resume the session
-$userID = $_SESSION['userid'];
 
 include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 include('include/without.php');
@@ -37,7 +36,7 @@ function addToCart($productId) {
         $cartKey = 'cart_' . $userId; // Create a unique cart key for the user
 
         // Initialize the user's cart if not already set
-        if (!isset($_SESSION[$cartKey])) {
+        if (isset($_SESSION[$cartKey])) {
             $_SESSION[$cartKey] = array();
         }
 
@@ -55,7 +54,7 @@ function addToCart($productId) {
     } else {
         // Handle the case where the user is not logged in
         // You might want to redirect them to the login page or show a message
-        header("Location: signin.php");
+        echo "<script>window.location.href = 'signin.php';</script>";
         exit();
     }
 }

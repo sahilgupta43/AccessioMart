@@ -10,6 +10,12 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+include('include/without.php');
+
 // Fetch products with category name 'laptop'
 $selectQuery = "SELECT p.pid, p.pname, p.price, p.pimage
                 FROM products p
@@ -30,15 +36,13 @@ function getProductById($productId) {
 
 // Function to add product to cart
 function addToCart($productId) {
-    global $products;
-
     // Ensure the user is logged in
     if (isset($_SESSION['userid'])) {
         $userId = $_SESSION['userid'];
         $cartKey = 'cart_' . $userId; // Create a unique cart key for the user
 
         // Initialize the user's cart if not already set
-        if (!isset($_SESSION[$cartKey])) {
+        if (isset($_SESSION[$cartKey])) {
             $_SESSION[$cartKey] = array();
         }
 
@@ -55,15 +59,10 @@ function addToCart($productId) {
         }
     } else {
         // Handle the case where the user is not logged in
-        // You might want to redirect them to the login page or show a message
-        header("Location: signin.php");
+        echo "<script>window.location.href = 'signin.php';</script>";
         exit();
     }
 }
-
-
-// Function to get product details by ID
-
 
 // Check if 'add_to_cart' parameter is set (simulating a form submission or button click)
 if (isset($_GET['add_to_cart'])) {
@@ -73,6 +72,9 @@ if (isset($_GET['add_to_cart'])) {
 
 // Function to add product to wishlist
 function addToWishlist($productId) {
+    if (isset($_SESSION['wishlist'])) {
+        $_SESSION['wishlist'] = array();
+    }
     $_SESSION['wishlist'][$productId] = true;
 }
 
@@ -81,6 +83,7 @@ if (isset($_GET['add_to_wishlist'])) {
     $productId = $_GET['add_to_wishlist'];
     addToWishlist($productId);
 }
+
 // Close database connection
 $conn->close();
 ?>
@@ -110,7 +113,7 @@ $conn->close();
                 while ($row = $result->fetch_assoc()) {
                     echo '<div class="col-lg-4 col-md-6 mb-4">';
                     echo '<div class="card">';
-                    echo '<img src="admin/' . $row['pimage'] . '" class="card-img-top" alt="Product Image">'; // Adjusted path here
+                    echo '<img src="admin/' . $row['pimage'] . '" class="card-img-top" alt="Product Image">';
                     echo '<div class="card-body">';
                     echo '<h5 class="card-title">' . $row['pname'] . '</h5>';
                     echo '<p class="card-text">NPR ' . $row['price'] . '</p>';

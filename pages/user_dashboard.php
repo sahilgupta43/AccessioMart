@@ -258,7 +258,7 @@ $conn->close();
         });
 
         function validatePassword(password) {
-            var pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            var pattern = /^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[@$!%?&])[A-Za-z\d@$!%?&]{8,}$/;
             return pattern.test(password);
         }
 
@@ -353,7 +353,7 @@ $conn->close();
                         <td><?php echo htmlspecialchars($order['orderid']); ?></td>
                         <td><?php echo htmlspecialchars($order['pid']); ?></td>
                         <td><?php echo htmlspecialchars($order['pname']); ?></td>
-                        <td><img src="<?php echo htmlspecialchars($order['pimage']); ?>" alt="<?php echo htmlspecialchars($order['pname']); ?>"></td>
+                        <td><img src="admin/<?php echo htmlspecialchars($order['pimage']); ?>" alt="<?php echo htmlspecialchars($order['pname']); ?>"></td>
                         <td><?php echo htmlspecialchars($order['quantity']); ?></td>
                         <td><?php echo htmlspecialchars($order['price']); ?></td>
                         <td><?php echo htmlspecialchars($order['totalprice']); ?></td>

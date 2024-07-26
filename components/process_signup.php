@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param('ssss', $name, $email, $phone, $hashedPassword);
     
     if ($stmt->execute()) {
-        header("Location: index.php");
+        header("Location: signin.php");
     } else {
         header("Location: signup.php");
     }

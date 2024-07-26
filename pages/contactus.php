@@ -1,6 +1,5 @@
 <?php 
 session_start(); // Start or resume the session
-$userID = $_SESSION['userid'];
 include('include/header.php');
 
 ?>
@@ -198,11 +197,10 @@ include('include/header.php');
 
                 <div class="social-media">
                     <h4>Follow Us:</h4>
-                    <a href="https://www.facebook.com/accessiomart" target="_blank" class="fab fa-facebook-f"></a>
-                    <a href="https://www.twitter.com/accessiomart" target="_blank" class="fab fa-twitter"></a>
-                    <a href="https://www.instagram.com/accessiomart" target="_blank" class="fab fa-instagram"></a>
-                    <a href="https://www.linkedin.com/accessiomart" target="_blank" class="fab fa-linkedin-in"></a>
-                    <a href="https://www.youtube.com/accessiomart" target="_blank" class="fab fa-youtube"></a>
+                    <a href="https://facebook.com/accessiomart" target="_blank" class="fab fa-facebook-f"></a>
+                    <a href="https://twitter.com/accessiomart" target="_blank" class="fab fa-twitter"></a>
+                    <a href="https://instagram.com/accessiomart" target="_blank" class="fab fa-instagram"></a>
+                    <a href="https://linkedin.com/company/accessiomart" target="_blank" class="fab fa-linkedin-in"></a>
                 </div>
             </div>
         </div>
