@@ -1,4 +1,9 @@
-<?php include('include/header.php') ?>
+<?php 
+include('include/header.php');
+
+$token = $_GET['token'];
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -87,12 +92,15 @@ form button:hover {
 <body>
     <main>
         <h2>Reset Password</h2>
-        <form action="process_reset_password.php" method="POST">
-            <input type="hidden" name="token" value="<?php echo htmlspecialchars($_GET['token']); ?>">
-            <label for="password">New Password:</label>
-            <input type="password" id="password" name="password" placeholder="Enter your new password" required>
-            <button type="submit" name="reset">Reset Password</button>
-        </form>
+        <form action="process_reset_password.php" method="post">
+    <input type="hidden" name="token" value="<?php echo $token; ?>">
+    <label for="password">New Password:</label>
+    <input type="password" id="password" name="password" required>
+    <label for="confirm_password">Confirm Password:</label>
+    <input type="password" id="confirm_password" name="confirm_password" required>
+    <button type="submit" name="reset_password">Reset Password</button>
+</form>
+
     </main>
 </body>
 </html>
