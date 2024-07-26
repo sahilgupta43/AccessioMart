@@ -1,5 +1,5 @@
 <?php
-// Check if a session is already started before starting a new session
+// connectdb.php
 
 // Database credentials
 $servername = "localhost";
