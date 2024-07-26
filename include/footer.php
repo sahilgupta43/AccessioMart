@@ -11,7 +11,7 @@
     <footer>
         <div class="footer-container">
             <div class="footer-column">
-                <h2><a href="../index.php">AccessioMart</a></h2>
+                <h2><a href="index.php">AccessioMart</a></h2>
                 <p>Your go-to destination for quality products at unbeatable prices. We offer a wide range of items to meet all your needs.</p>
             </div>
             <div class="footer-column">
@@ -27,11 +27,11 @@
             <div class="footer-column">
                 <h3>Links</h3>
                 <ul>
-                    <li><a href="../pages/privacy_policy.php">Privacy Policy</a></li>
-                    <li><a href="../pages/return_policy.php">Return Policy</a></li>
-                    <li><a href="../pages/shipping.php">Shipping Information</a></li>
-                    <li><a href="../pages/terms.php">Terms & Conditions</a></li>
-                    <li><a href="../pages/help.php">Help & Support</a></li>
+                    <li><a href="pages/privacy_policy.php">Privacy Policy</a></li>
+                    <li><a href="pages/return_policy.php">Return Policy</a></li>
+                    <li><a href="pages/shipping.php">Shipping Information</a></li>
+                    <li><a href="pages/terms.php">Terms & Conditions</a></li>
+                    <li><a href="pages/help.php">Help & Support</a></li>
                 </ul>
             </div>
             <div class="footer-column">
@@ -46,7 +46,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 <a style="color: #fff" href="../admin/login.php">AccessioMart</a>. All Rights Reserved.</p>
+            <p>&copy; 2024 <a style="color: #fff" href="admin/login.php">AccessioMart</a>. All Rights Reserved.</p>
         </div>
     </footer>
 
