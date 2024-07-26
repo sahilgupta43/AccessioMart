@@ -46,7 +46,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 <a style="color: #fff" href="accessiomart/admin/login.php">AccessioMart</a>. All Rights Reserved.</p>
+            <p>&copy; 2024 <a style="color: #fff" href="admin/login.php">AccessioMart</a>. All Rights Reserved.</p>
         </div>
     </footer>
 

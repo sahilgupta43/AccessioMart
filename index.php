@@ -76,48 +76,7 @@ $userID = isset($_SESSION['userid']) ? $_SESSION['userid'] : null;
     <!-- Popup Message -->
     <div id="popup-message"></div>
 
-    <script>
-        document.getElementById('newsletter-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const form = event.target;
-            const formData = new FormData(form);
-
-            fetch('subscribe.php', { // Path to the PHP script
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                const popupMessage = document.getElementById('popup-message');
-
-                if (data.success) {
-                    popupMessage.textContent = 'Successfully subscribed!';
-                    popupMessage.style.backgroundColor = '#28a745'; // Green for success
-                } else {
-                    popupMessage.textContent = data.error;
-                    popupMessage.style.backgroundColor = '#dc3545'; // Red for error
-                }
-
-                popupMessage.style.display = 'block';
-                setTimeout(() => {
-                    popupMessage.style.display = 'none';
-                }, 2000);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                const popupMessage = document.getElementById('popup-message');
-                popupMessage.textContent = 'An error occurred. Please try again.';
-                popupMessage.style.backgroundColor = '#dc3545'; // Red for error
-                popupMessage.style.display = 'block';
-
-                setTimeout(() => {
-                    popupMessage.style.display = 'none';
-                }, 2000);
-            });
-        });
-
-    </script>
+    <script src="assests/js/script.js"></script>
 
     <?php include('include/footer.php'); ?>
 </body>
