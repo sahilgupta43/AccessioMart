@@ -1,5 +1,5 @@
 <?php 
-session_start(); // Start or resume the session
+session_start(); 
 
 // Comment out or remove the session check
 // if (!isset($_SESSION['userid'])) {
@@ -23,66 +23,7 @@ $userID = isset($_SESSION['userid']) ? $_SESSION['userid'] : null;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AccessioMart</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        /* Newsletter Section Styles */
-        #newsletter {
-            padding: 50px 0;
-            background-color: #020508e0;
-            color: #fff;
-            text-align: center;
-        }
-
-        #newsletter .section-title {
-            margin-bottom: 20px;
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        #newsletter .newsletter-form {
-            max-width: 600px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: center;
-        }
-
-        #newsletter .newsletter-form input[type="email"] {
-            width: 70%;
-            padding: 10px;
-            border: none;
-            border-radius: 5px 0 0 5px;
-            outline: none;
-        }
-
-        #newsletter .newsletter-form button {
-            width: 30%;
-            padding: 10px;
-            border: none;
-            background-color: #0056b3;
-            color: #fff;
-            border-radius: 0 5px 5px 0;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        #newsletter .newsletter-form button:hover {
-            background-color: #003f8a;
-        }
-        /* Popup Message Styles */
-        #popup-message {
-            display: none;
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px;
-            background-color: #28a745;
-            color: #fff;
-            border-radius: 5px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="assests/css/styles.css">
 </head>
 <body>
     <!-- Hero Section -->
