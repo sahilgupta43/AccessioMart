@@ -1,4 +1,4 @@
-<?php include('../include/header.php') ?>
+<?php include('include/header.php') ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -122,7 +122,7 @@
         <!-- Signup form -->
         <h2>Signup Form</h2>
 
-        <form action="../components/process_signup.php" method="POST" onsubmit="return validateForm()">
+        <form action="process_signup.php" method="POST" onsubmit="return validateForm()">
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" placeholder="Enter your name" required>
 
@@ -153,8 +153,8 @@
             </div>
         </form>
     </main>
-    <script src="../assests/js/script.js"></script>
+    <script src="js/script.js"></script>
 </body>
 </html>
 
-<?php include('../include/footer.php') ?>
+<?php include('include/footer.php') ?>

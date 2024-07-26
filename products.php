@@ -3,7 +3,7 @@
 session_start(); // Start or resume the session
 
 include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
-include('../include/without.php');
+include('include/without.php');
 
 // SQL query to fetch products from database
 $sql = "SELECT pid, pname, price, pimage FROM products";
@@ -166,8 +166,8 @@ $conn->close();
     <?php endforeach; ?>
 </div>
 
-<?php include('../include/footer.php') ?>
-<script src="assests/js/search.js"></script>
+<?php include('include/footer.php') ?>
+<script src="js/search.js"></script>
 
 </body>
 </html>

@@ -14,7 +14,7 @@ if ($conn->connect_error) {
 }
 
 // Include header without session_start() inside it
-include('../include/without.php');
+include('include/without.php');
 
 $userID = $_SESSION['userid']; // Get user ID from session
 
@@ -58,7 +58,7 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard</title>
-    <link rel="stylesheet" href="../assests/css/styles.css">
+    <link rel="stylesheet" href="css/styles.css">
     <style>
         /* Unique styling for the user dashboard - specific to main content */
         .main-content {
@@ -248,7 +248,7 @@ $conn->close();
 <body>
     <div class="dashboard-header-container">
         <h1 class="dashboard-header">Welcome, <?php echo htmlspecialchars($user['name']); ?></h1>
-        <a href="../components/logout.php" class="logout-button">Logout</a>
+        <a href="logout.php" class="logout-button">Logout</a>
     </div>
 
     <div class="navbar-user">
@@ -329,7 +329,7 @@ $conn->close();
         </div>
         <button class="update-button" onclick="updatePassword()">Update Password</button>
     </div>
-    <script src="../assests/js/script.js"></script>
-    <?php include('../include/footer.php') ?>
+    <script src="js/script.js"></script>
+    <?php include('include/footer.php') ?>
 </body>
 </html>

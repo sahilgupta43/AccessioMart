@@ -3,7 +3,7 @@ session_start(); // Start or resume the session
 $userID = $_SESSION['userid'];
 
 include ('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
-include ('../include/without.php');
+include ('include/without.php');
 
 // Fetch products from the database to display details in the wishlist
 $sql = "SELECT pid, pimage , pname, price FROM products";
@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_from_wishlist'
 <body>
 
     <?php displayWishlist(); ?>
-    <?php include ('../include/footer.php') ?>
+    <?php include ('include/footer.php') ?>
 </body>
 
 </html>

@@ -2,7 +2,7 @@
 // Include database connection and header
 session_start(); // Start or resume the session
 include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
-include('../include/without.php');
+include('include/without.php');
 
 // SQL query to fetch categories
 $sql = "SELECT cid, category_name, category_image FROM categories";
@@ -73,7 +73,7 @@ $conn->close();
     <?php endforeach; ?>
 </div>
 
-<?php include('../include/footer.php') ?>
+<?php include('include/footer.php') ?>
 
 </body>
 </html>

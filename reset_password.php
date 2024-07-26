@@ -92,7 +92,7 @@ form button:hover {
 <body>
     <main>
         <h2>Reset Password</h2>
-        <form action="../components/process_reset_password.php" method="post">
+        <form action="process_reset_password.php" method="post">
     <input type="hidden" name="token" value="<?php echo $token; ?>">
     <label for="password">New Password:</label>
     <input type="password" id="password" name="password" required>
@@ -105,4 +105,4 @@ form button:hover {
 </body>
 </html>
 
-<?php include('../include/footer.php') ?>
+<?php include('include/footer.php') ?>

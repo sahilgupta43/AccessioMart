@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AccessioMart</title>
-    <link rel="stylesheet" href="../assests/css/styles.css">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <!-- Footer -->
@@ -27,11 +27,11 @@
             <div class="footer-column">
                 <h3>Links</h3>
                 <ul>
-                    <li><a href="pages/privacy_policy.php">Privacy Policy</a></li>
-                    <li><a href="pages/return_policy.php">Return Policy</a></li>
-                    <li><a href="pages/shipping.php">Shipping Information</a></li>
-                    <li><a href="pages/terms.php">Terms & Conditions</a></li>
-                    <li><a href="pages/help.php">Help & Support</a></li>
+                    <li><a href="privacy_policy.php">Privacy Policy</a></li>
+                    <li><a href="return_policy.php">Return Policy</a></li>
+                    <li><a href="shipping.php">Shipping Information</a></li>
+                    <li><a href="terms.php">Terms & Conditions</a></li>
+                    <li><a href="help.php">Help & Support</a></li>
                 </ul>
             </div>
             <div class="footer-column">
@@ -46,11 +46,11 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 <a style="color: #fff" href="admin/login.php">AccessioMart</a>. All Rights Reserved.</p>
+            <p>&copy; 2024 <a style="color: #fff" href="login.php">AccessioMart</a>. All Rights Reserved.</p>
         </div>
     </footer>
 
-    <script src="../assests/js/script.js"></script>
+    <script src="js/script.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </body>
 </html>

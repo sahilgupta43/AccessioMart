@@ -2,7 +2,7 @@
 // Include database connection and header
 session_start(); // Start or resume the session
 include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
-include('../include/without.php');
+include('include/without.php');
 
 // Get category ID from URL
 $cid = isset($_GET['cid']) ? intval($_GET['cid']) : 0;
@@ -110,7 +110,7 @@ $conn->close();
 
 <a href="categories.php" class="back-link">Back to Categories</a>
 
-<?php include('../include/footer.php') ?>
+<?php include('include/footer.php') ?>
 
 </body>
 </html>

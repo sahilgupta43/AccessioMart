@@ -1,4 +1,4 @@
-<?php include('../include/header.php') ?>
+<?php include('include/header.php') ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -60,6 +60,6 @@
             <p>5.1 We reserve the right, at our sole discretion, to modify or replace these Terms and Conditions by posting the updated terms on the Website.</p>
         </div>
     </div>
-    <?php include('../include/footer.php') ?>
+    <?php include('include/footer.php') ?>
 </body>
 </html>

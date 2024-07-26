@@ -1,6 +1,6 @@
 <?php 
 session_start(); // Start or resume the session
-include('../include/header.php');
+include('include/header.php');
 
 ?>
 
@@ -210,6 +210,6 @@ include('../include/header.php');
         </div>
     </div>
 
-    <?php include('../include/footer.php') ?>
+    <?php include('include/footer.php') ?>
 </body>
 </html>

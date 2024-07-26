@@ -1,4 +1,4 @@
-<?php include('../include/header.php') ?>
+<?php include('include/header.php') ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us - AccessioMart</title>
-    <link rel="stylesheet" href="accessiomart/assests/css/styles.css">
+    <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-5Stm0lMkPCjfkVoCO91XAKzjtbrblZxViID9opJKzXu3eFuXDEPSsCmU4CTnuCOG7oOWo6v9lWZ8aMPrzDc/Ow==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
@@ -57,4 +57,4 @@
 </body>
 </html>
 
-<?php include('../include/footer.php') ?>
+<?php include('include/footer.php') ?>

@@ -1,4 +1,4 @@
-<?php include('../include/header.php') ?>
+<?php include('include/header.php') ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -78,7 +78,7 @@
             <p class="error-message"><?php echo htmlspecialchars($_GET['error']); ?></p>
         <?php endif; ?>
 
-        <form action="../components/process_signin.php" method="POST">
+        <form action="process_signin.php" method="POST">
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" placeholder="Enter your email" required>
 
@@ -96,4 +96,4 @@
 </body>
 </html>
 
-<?php include('../include/footer.php') ?>
+<?php include('include/footer.php') ?>

@@ -76,7 +76,7 @@ $userID = isset($_SESSION['userid']) ? $_SESSION['userid'] : null;
     <!-- Popup Message -->
     <div id="popup-message"></div>
 
-    <script src="assests/js/script.js"></script>
+    <script src="js/script.js"></script>
 
     <?php include('include/footer.php'); ?>
 </body>

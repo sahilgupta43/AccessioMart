@@ -2,7 +2,7 @@
 session_start(); // Start or resume session
 
 // Include header for consistent look and feel
-include('../include/header.php');
+include('include/header.php');
 ?>
 
 <!DOCTYPE html>
@@ -60,7 +60,7 @@ include('../include/header.php');
         <a href="contact.php" class="button">Contact Support</a>
     </div>
 
-    <?php include('../include/footer.php'); ?>
+    <?php include('include/footer.php'); ?>
 </body>
 
 </html>
