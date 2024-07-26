@@ -14,7 +14,7 @@
 
     <h2>Thank You for Your Purchase!</h2>
     <p>Your order has been placed successfully.</p>
-    <a href="index.php" class="button">Continue Shopping</a>
+    <a href="accessiomart/index.php" class="button">Continue Shopping</a>
 
 </body>
 

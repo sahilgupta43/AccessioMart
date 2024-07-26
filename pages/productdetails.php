@@ -3,7 +3,7 @@
 session_start(); // Start or resume the session
 $userID = $_SESSION['userid'];
 include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
-include('include/header.php');
+include('../include/header.php');
 
 // Fetch product details by product ID
 if (isset($_GET['pid'])) {
@@ -254,8 +254,8 @@ $conn->close();
     </div>
 </div>
 
-<?php include('include/footer.php') ?>
-<script src="js/search.js"></script>
+<?php include('../include/footer.php') ?>
+<script src="assests/js/search.js"></script>
 
 </body>
 </html>

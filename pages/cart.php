@@ -2,7 +2,7 @@
 session_start(); // Start or resume session
 
 include ('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
-include ('include/without.php');
+include ('../include/without.php');
 
 // Function to display cart details and summary
 function displayCart() {
@@ -146,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_one'])) {
 <body>
 
     <?php displayCart(); ?>
-    <?php include ('include/footer.php') ?>
+    <?php include ('../include/footer.php') ?>
 </body>
 
 </html>

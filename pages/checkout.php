@@ -2,7 +2,7 @@
 session_start(); // Start or resume session
 
 include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
-include('include/header.php');
+include('../include/header.php');
 
 // Function to display checkout form and process payment
 function displayCheckout()
@@ -143,7 +143,7 @@ displayCheckout();
 
 <body>
 
-    <?php include('include/footer.php') ?>
+    <?php include('../include/footer.php') ?>
 </body>
 
 </html>

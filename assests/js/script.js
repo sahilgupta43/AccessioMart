@@ -79,3 +79,104 @@ document.getElementById('newsletter-form').addEventListener('submit', function(e
         }, 2000);
     });
 });
+
+//signup
+function validateForm() {
+    // Get form elements
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+    const password = document.getElementById('password').value;
+    const conpassword = document.getElementById('conpassword').value;
+
+    // Regular expressions for validation
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^\d{10}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    // Validate name
+    if (!nameRegex.test(name)) {
+        alert('Name must contain only alphabets and spaces.');
+        return false;
+    }
+
+    // Validate email
+    if (!emailRegex.test(email)) {
+        alert('Invalid email format.');
+        return false;
+    }
+
+    // Validate phone
+    if (!phoneRegex.test(phone)) {
+        alert('Phone number must be 10 digits.');
+        return false;
+    }
+
+    // Validate password
+    if (!passwordRegex.test(password)) {
+        alert('Password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a number, and a special character.');
+        return false;
+    }
+
+    // Validate confirm password
+    if (password !== conpassword) {
+        alert('Passwords do not match.');
+        return false;
+    }
+
+    // If all validations pass
+    return true;
+}
+
+//user_dashboard
+function showSection(sectionId) {
+    var sections = document.getElementsByClassName('content-section');
+    for (var i = 0; i < sections.length; i++) {
+        sections[i].classList.remove('active');
+    }
+    document.getElementById(sectionId).classList.add('active');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    showSection('user-info');
+});
+
+function validatePassword(password) {
+    var pattern = /^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[@$!%?&])[A-Za-z\d@$!%?&]{8,}$/;
+    return pattern.test(password);
+}
+
+function updatePassword() {
+    var currentPassword = document.getElementById('current-password').value;
+    var newPassword = document.getElementById('new-password').value;
+    var confirmNewPassword = document.getElementById('confirm-new-password').value;
+    var errorMessage = document.getElementById('error-message');
+    var successMessage = document.getElementById('success-message');
+
+    if (newPassword !== confirmNewPassword) {
+        errorMessage.textContent = 'New passwords do not match.';
+        return false;
+    }
+
+    if (!validatePassword(newPassword)) {
+        errorMessage.textContent = 'Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.';
+        return false;
+    }
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'update_password.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            if (xhr.responseText === 'success') {
+                successMessage.textContent = 'Password successfully changed.';
+            } else {
+                errorMessage.textContent = xhr.responseText;
+            }
+        } else {
+            errorMessage.textContent = 'An error occurred while updating the password.';
+        }
+    };
+    xhr.send('current_password=' + encodeURIComponent(currentPassword) + '&new_password=' + encodeURIComponent(newPassword));
+}

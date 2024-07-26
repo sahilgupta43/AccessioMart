@@ -1,4 +1,4 @@
-<?php include('include/header.php') ?>
+<?php include('../include/header.php') ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -42,7 +42,7 @@
             <p>1.1 The following terminology applies to these Terms and Conditions:</p>
             <ul>
                 <li><strong>1.2 Agreement:</strong> refers to these Terms and Conditions.</li>
-                <li><strong>1.3 Company:</strong> refers to AccessioMart, whose registered office is at [Company Address].</li>
+                <li><strong>1.3 Company:</strong> refers to AccessioMart, whose registered office is at Kathmandu.</li>
                 <li><strong>1.4 Website:</strong> refers to AccessioMart, accessible from https://www.accessiomart.com.</li>
                 <li><strong>1.5 You:</strong> means the individual accessing or using the Website, or the company, or other legal entity on behalf of which such individual is accessing or using the Website, as applicable.</li>
             </ul>
@@ -60,6 +60,6 @@
             <p>5.1 We reserve the right, at our sole discretion, to modify or replace these Terms and Conditions by posting the updated terms on the Website.</p>
         </div>
     </div>
-    <?php include('include/footer.php') ?>
+    <?php include('../include/footer.php') ?>
 </body>
 </html>

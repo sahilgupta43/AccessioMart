@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thank You</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="../assests/css/styles.css">
     <style>
         /* Custom Styles for Thank You Page */
         body {
@@ -60,7 +60,7 @@
     <div id="thank-you">
         <h1>Thank You!</h1>
         <p>Your feedback has been submitted successfully. We appreciate your input!</p>
-        <a href="index.php">Back to Homepage</a>
+        <a href="../index.php">Back to Homepage</a>
     </div>
 </body>
 </html>

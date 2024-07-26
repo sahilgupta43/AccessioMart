@@ -45,7 +45,7 @@ if (isset($_GET['oid']) && isset($_GET['amt']) && isset($_GET['refId'])) {
     }
 } else {
     // Handle missing parameters
-    header("Location: failure.php");
+    header("Location: ../components/failure.php");
     exit();
 }
 ?>
