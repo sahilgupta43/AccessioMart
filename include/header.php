@@ -14,10 +14,10 @@
         <div class="top-bar">
             <div class="date-time" id="date-time"></div>
             <div class="top-links">
-                <a href="about.php">About</a>
-                <a href="faq.php">FAQ</a>
-                <a href="terms.php">Terms</a>
-                <a href="contactus.php">Contact Us</a>
+                <a href="/pages/about.php">About</a>
+                <a href="pages/faq.php">FAQ</a>
+                <a href="pages/terms.php">Terms</a>
+                <a href="pages/contactus.php">Contact Us</a>
             </div>
         </div>
 
@@ -28,8 +28,8 @@
             </div>
             <ul class="nav-links">
                 <li><a href="index.php">Home</a></li>
-                <li><a href="categories.php">Categories</a></li>
-                <li><a href="products.php">Products</a></li>
+                <li><a href="pages/categories.php">Categories</a></li>
+                <li><a href="pages/products.php">Products</a></li>
                 <li><a href="contactus.php">Contact</a></li>
                 <?php if (isset($_SESSION['userid'])): ?>
                     <li><a href="user_dashboard.php">Dashboard</a></li>
