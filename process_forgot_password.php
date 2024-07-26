@@ -1,42 +1,73 @@
 <?php
 include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
+require 'vendor/autoload.php'; // Make sure Composer's autoload file is included
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+session_start();
 
 if (isset($_POST['reset'])) {
+    if (!isset($_POST['email']) || empty($_POST['email'])) {
+        $_SESSION['message'] = "Email is required.";
+        header('Location: forgot_password.php');
+        exit;
+    }
+
     $email = $_POST['email'];
 
     // Check if the email exists in the database
-    $query = "SELECT id FROM users WHERE email = ?";
-    $stmt = $pdo->prepare($query);
-    $stmt->execute([$email]);
+    $query = "SELECT userid FROM customers WHERE email = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $stmt->store_result();
 
-    if ($stmt->rowCount() > 0) {
-        $userId = $stmt->fetchColumn();
-
+    if ($stmt->num_rows > 0) {
         // Generate a unique token
         $token = bin2hex(random_bytes(50));
-        $expires = date("U") + 3600; // Token expires in 1 hour
+        $expires = time() + 3600; // Token expires in 1 hour
 
         // Store the token in the database
         $query = "INSERT INTO password_resets (email, token, expires) VALUES (?, ?, ?)";
-        $stmt = $pdo->prepare($query);
-        $stmt->execute([$email, $token, $expires]);
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ssi", $email, $token, $expires);
+        $stmt->execute();
 
         // Create the reset link
-        $resetLink = "http://yourdomain.com/reset_password.php?token=$token";
+        $resetLink = "localhost/accessiomart/reset_password.php?token=$token";
 
-        // Send the email (using PHP's mail function for simplicity)
-        $to = $email;
-        $subject = "Password Reset Request";
-        $message = "Please click the following link to reset your password: $resetLink";
-        $headers = "From: no-reply@yourdomain.com";
+        // Send the email using PHPMailer
+        $mail = new PHPMailer(true);
+        try {
+            // Server settings
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com'; // Set the SMTP server to send through
+            $mail->SMTPAuth = true;
+            $mail->Username = 'guptasahil2294@gmail.com'; // SMTP username
+            $mail->Password = 'hodv rcwo kitg cgig'; // App-specific password
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Enable TLS encryption, `PHPMailer::ENCRYPTION_SMTPS` also accepted
+            $mail->Port = 587; // TCP port to connect to
 
-        if (mail($to, $subject, $message, $headers)) {
-            echo "A password reset link has been sent to your email.";
-        } else {
-            echo "Failed to send the email.";
+            // Recipients
+            $mail->setFrom('no-reply@accessiomart.com', 'AccessioMart');
+            $mail->addAddress($email); // Add a recipient
+
+            // Content
+            $mail->isHTML(true); // Set email format to HTML
+            $mail->Subject = 'Password Reset Request';
+            $mail->Body    = "Please click the following link to reset your password: <a href='$resetLink'>$resetLink</a>";
+
+            $mail->send();
+            $_SESSION['message'] = "A password reset link has been sent to your email.";
+        } catch (Exception $e) {
+            $_SESSION['message'] = "Failed to send the email. Mailer Error: {$mail->ErrorInfo}";
         }
     } else {
-        echo "No account found with that email address.";
+        $_SESSION['message'] = "No account found with that email address.";
     }
+
+    header('Location: forgot_password.php');
+    exit;
 }
 ?>
