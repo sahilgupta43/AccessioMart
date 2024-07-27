@@ -14,7 +14,6 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-include('include/without.php');
 
 // Fetch products with category name 'laptop'
 $selectQuery = "SELECT p.pid, p.pname, p.price, p.pimage

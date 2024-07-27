@@ -1,33 +1,33 @@
 <?php
 
-    include('include/connectdb.php');
+include('include/connectdb.php');
 
-    if (isset($_SESSION['admin_id'])) {
-        header("Location: login.php");
-        exit();
-    }
+if (isset($_SESSION['admin_id'])) {
+    header("Location: login.php");
+    exit();
+}
 
-    // Fetch total customers
-    $totalCustomersQuery = "SELECT COUNT(*) AS total_customers FROM customers";
-    $totalCustomersResult = $conn->query($totalCustomersQuery);
-    $totalCustomers = $totalCustomersResult->fetch_assoc()['total_customers'];
+// Fetch total customers
+$totalCustomersQuery = "SELECT COUNT(*) AS total_customers FROM customers";
+$totalCustomersResult = $conn->query($totalCustomersQuery);
+$totalCustomers = $totalCustomersResult->fetch_assoc()['total_customers'];
 
-    // Fetch total sales
-    $totalSalesQuery = "SELECT SUM(totalprice) AS total_sales FROM orders";
-    $totalSalesResult = $conn->query($totalSalesQuery);
-    $totalSales = $totalSalesResult->fetch_assoc()['total_sales'];
+// Fetch total sales
+$totalSalesQuery = "SELECT SUM(totalprice) AS total_sales FROM orders";
+$totalSalesResult = $conn->query($totalSalesQuery);
+$totalSales = $totalSalesResult->fetch_assoc()['total_sales'];
 
-    // Fetch total products
-    $totalProductsQuery = "SELECT COUNT(*) AS total_products FROM products";
-    $totalProductsResult = $conn->query($totalProductsQuery);
-    $totalProducts = $totalProductsResult->fetch_assoc()['total_products'];
+// Fetch total products
+$totalProductsQuery = "SELECT COUNT(*) AS total_products FROM products";
+$totalProductsResult = $conn->query($totalProductsQuery);
+$totalProducts = $totalProductsResult->fetch_assoc()['total_products'];
 
-    // Fetch total orders
-    $totalOrdersQuery = "SELECT COUNT(*) AS total_orders FROM orders";
-    $totalOrdersResult = $conn->query($totalOrdersQuery);
-    $totalOrders = $totalOrdersResult->fetch_assoc()['total_orders'];
+// Fetch total orders
+$totalOrdersQuery = "SELECT COUNT(*) AS total_orders FROM orders";
+$totalOrdersResult = $conn->query($totalOrdersQuery);
+$totalOrders = $totalOrdersResult->fetch_assoc()['total_orders'];
 
-    $conn->close();
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -38,6 +38,16 @@
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .card-link {
+            text-decoration: none;
+            color: inherit; /* Ensures the link doesn't change text color */
+        }
+
+        .card {
+            cursor: pointer; /* Changes cursor to pointer on hover */
+        }
+    </style>
 </head>
 <body>
     <div class="sidebar">
@@ -59,34 +69,42 @@
     <div class="main-content">
         <h2>Dashboard</h2>
         <div class="cards">
-            <div class="card">
-                <div class="card-icon">👤</div>
-                <div class="card-info">
-                    <h3>Total Customers</h3>
-                    <p><?php echo $totalCustomers; ?></p>
+            <a href="users.php" class="card-link">
+                <div class="card">
+                    <div class="card-icon">👤</div>
+                    <div class="card-info">
+                        <h3>Total Customers</h3>
+                        <p><?php echo $totalCustomers; ?></p>
+                    </div>
                 </div>
-            </div>
+            </a>
+            <a href="adminportal.php" class="card-link">
             <div class="card">
                 <div class="card-icon">💰</div>
                 <div class="card-info">
                     <h3>Total Sales</h3>
-                    <p>NPR<?php echo number_format($totalSales, 2); ?></p>
+                    <p>NPR <?php echo number_format($totalSales, 2); ?></p>
                 </div>
             </div>
-            <div class="card">
-                <div class="card-icon">📦</div>
-                <div class="card-info">
-                    <h3>Total Products</h3>
-                    <p><?php echo $totalProducts; ?></p>
+
+            <a href="products.php" class="card-link">
+                <div class="card">
+                    <div class="card-icon">📦</div>
+                    <div class="card-info">
+                        <h3>Total Products</h3>
+                        <p><?php echo $totalProducts; ?></p>
+                    </div>
                 </div>
-            </div>
-            <div class="card">
-                <div class="card-icon">🛒</div>
-                <div class="card-info">
-                    <h3>Total Orders</h3>
-                    <p><?php echo $totalOrders; ?></p>
+            </a>
+            <a href="orders.php" class="card-link">
+                <div class="card">
+                    <div class="card-icon">🛒</div>
+                    <div class="card-info">
+                        <h3>Total Orders</h3>
+                        <p><?php echo $totalOrders; ?></p>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
         <canvas id="salesChart"></canvas>
     </div>
