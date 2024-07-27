@@ -1,17 +1,6 @@
 <?php
 include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 
-// Function to check if product name is unique
-function isProductNameUnique($conn, $productName) {
-    $query = "SELECT COUNT(*) AS count FROM products WHERE pname = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("s", $productName);
-    $stmt->execute();
-    $result = $stmt->get_result()->fetch_assoc();
-    $stmt->close();
-    return $result['count'] == 0;
-}
-
 // Fetch all categories from the database for the dropdown
 $categoriesQuery = "SELECT cid, category_name FROM categories";
 $categoriesResult = $conn->query($categoriesQuery);
@@ -22,16 +11,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     $productPrice = $_POST['productPrice'];
     $productDescription = $_POST['productDescription'];
     $categoryId = $_POST['categoryId'];
-
-    // Server-side validation
-    if (!isProductNameUnique($conn, $productName)) {
-        echo "Product name already exists. Please choose a different name.";
-        exit();
-    }
-    if ($productPrice <= 0) {
-        echo "Product price must be a positive number.";
-        exit();
-    }
 
     // Handle image upload if provided
     $productImage = ''; // Initialize empty for now
@@ -49,7 +28,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
             $productImage = $targetFilePath;
         } else {
             echo "Sorry, there was an error uploading your file.";
-            exit();
         }
     }
 
@@ -132,9 +110,8 @@ $conn->close();
     <link rel="stylesheet" href="css/styles.css">
     <style>
         .main-content {
-            margin-left: 250px;
+            margin-left: 250px; 
             padding: 20px;
-            overflow: hidden;
         }
         .container form {
             max-width: 600px;
@@ -174,7 +151,7 @@ $conn->close();
             background-color: #45a049;
         }
         .product-table {
-            width: calc(100% - 250px); /* Ensure the table does not overlap the sidebar */
+            width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
@@ -207,8 +184,8 @@ $conn->close();
             text-decoration: underline;
             color: #0056b3;
         }
-        /* Modal Background */
-        .modal {
+         /* Modal Background */
+         .modal {
             display: none; /* Hidden by default */
             position: fixed; /* Stay in place */
             z-index: 1; /* Sit on top */
@@ -309,7 +286,7 @@ $conn->close();
     <div class="main-content">
         <h2>Add Product</h2>
         <div class="container">
-            <form id="addProductForm" action="products.php" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+            <form action="products.php" method="POST" enctype="multipart/form-data">
                 <label for="productName">Product Name:</label>
                 <input type="text" id="productName" name="productName" required>
                 
@@ -375,29 +352,30 @@ $conn->close();
         </table>
     </div>
 
-    <div class="modal" id="editProductModal">
+    <div class="modal" id="editModal">
         <div class="modal-content">
             <span class="close" onclick="closeEditModal()">&times;</span>
             <h2>Edit Product</h2>
-            <form id="editProductForm" action="edit_product.php" method="POST" enctype="multipart/form-data">
-                <input type="hidden" id="editProductId" name="productId">
+            <form id="editForm" action="products.php" method="POST" enctype="multipart/form-data">
+                <input type="hidden" id="editProductId" name="editProductId">
                 
                 <label for="editProductName">Product Name:</label>
-                <input type="text" id="editProductName" name="productName" required>
+                <input type="text" id="editProductName" name="editProductName" required>
                 
                 <label for="editProductImage">Product Image:</label>
-                <input type="file" id="editProductImage" name="productImage">
+                <input type="file" id="editProductImage" name="editProductImage">
                 
                 <label for="editProductPrice">Price:</label>
-                <input type="number" id="editProductPrice" name="productPrice" step="0.01" required>
+                <input type="number" id="editProductPrice" name="editProductPrice" step="0.01" required>
                 
                 <label for="editProductDescription">Description:</label>
-                <textarea id="editProductDescription" name="productDescription" rows="5" maxlength="300" required></textarea>
+                <textarea id="editProductDescription" name="editProductDescription" rows="5" maxlength="300" required></textarea>
                 
                 <label for="editCategoryId">Category:</label>
-                <select id="editCategoryId" name="categoryId" required>
+                <select id="editCategoryId" name="editCategoryId" required>
                     <?php
-                    // Fetch categories for the dropdown
+                    // Fetch categories for the edit form
+                    $categoriesResult->data_seek(0); // Reset the result pointer
                     if ($categoriesResult->num_rows > 0) {
                         while ($row = $categoriesResult->fetch_assoc()) {
                             echo "<option value='" . $row['cid'] . "'>" . $row['category_name'] . "</option>";
@@ -406,11 +384,10 @@ $conn->close();
                     ?>
                 </select>
                 
-                <button type="submit" name="submit">Update Product</button>
+                <button type="submit" name="update">Update Product</button>
             </form>
         </div>
     </div>
-
 
     <script>
         function openEditModal(pid, pname, pimage, price, description, cid) {
@@ -446,37 +423,6 @@ $conn->close();
                 };
                 xhr.send("productId=" + pid);
             }
-        }
-
-
-        function validateForm() {
-            var productName = document.getElementById("productName").value;
-            var productPrice = document.getElementById("productPrice").value;
-
-            // Check if product price is positive
-            if (productPrice <= 0) {
-                alert("Product price must be a positive number.");
-                return false;
-            }
-
-            // Check if product name is unique via AJAX request to the server
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "check_product_name.php", false); // false makes the request synchronous
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xhr.send("productName=" + encodeURIComponent(productName));
-
-            if (xhr.status == 200) {
-                var response = JSON.parse(xhr.responseText);
-                if (!response.isUnique) {
-                    alert("Product name already exists. Please choose a different name.");
-                    return false;
-                }
-            } else {
-                alert("An error occurred while checking the product name.");
-                return false;
-            }
-
-            return true;
         }
     </script>
 </body>
