@@ -1,7 +1,6 @@
 <?php
 // Include database connection and header
 session_start(); // Start or resume the session
-$userID = $_SESSION['userid'];
 include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 include('include/header.php');
 
