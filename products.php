@@ -6,7 +6,7 @@ include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 include('include/without.php');
 
 // Pagination settings
-$items_per_page = 10; // Number of products per page
+$items_per_page = 8; // Number of products per page
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1; // Current page
 $offset = ($page - 1) * $items_per_page; // Offset for SQL query
 

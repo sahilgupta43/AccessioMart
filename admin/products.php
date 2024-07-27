@@ -2,7 +2,7 @@
 include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 
 // Define the number of products per page
-$products_per_page = 2;
+$products_per_page = 4;
 
 // Determine the current page number
 $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;

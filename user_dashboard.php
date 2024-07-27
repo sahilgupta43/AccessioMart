@@ -19,7 +19,7 @@ include('include/without.php');
 $userID = $_SESSION['userid']; // Get user ID from session
 
 // Pagination settings
-$items_per_page = 10; // Number of items per page
+$items_per_page = 4; // Number of items per page
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1; // Current page
 $offset = ($page - 1) * $items_per_page; // Offset for SQL query
 

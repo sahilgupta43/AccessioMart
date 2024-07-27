@@ -3,7 +3,7 @@
 include('include/connectdb.php');
 
 // Define the number of results per page
-$results_per_page = 5;
+$results_per_page = 10;
 
 // Determine the current page number
 $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
