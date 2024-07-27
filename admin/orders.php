@@ -1,11 +1,23 @@
 <?php
-    // Include database connection and start session
-    include('include/connectdb.php');
+// Include database connection
+include('include/connectdb.php');
 
-    // Function to fetch all orders from database
-    function fetchOrders($conn) {
-    $selectQuery = "SELECT orderid, userid, name, pid, pname, pimage, price, quantity, totalprice, status FROM orders";
-    $result = $conn->query($selectQuery);
+// Define the number of orders per page
+$orders_per_page = 10; // Adjust this number as needed
+
+// Determine the current page number
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
+
+// Calculate the starting record for the current page
+$start_from = ($page - 1) * $orders_per_page;
+
+// Function to fetch orders from the database for the current page
+function fetchOrders($conn, $start_from, $orders_per_page) {
+    $selectQuery = "SELECT orderid, userid, name, pid, pname, pimage, price, quantity, totalprice, status FROM orders LIMIT ?, ?";
+    $stmt = $conn->prepare($selectQuery);
+    $stmt->bind_param("ii", $start_from, $orders_per_page);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
         return $result->fetch_all(MYSQLI_ASSOC);
@@ -14,9 +26,16 @@
     }
 }
 
+// Fetch orders for the current page
+$orders = fetchOrders($conn, $start_from, $orders_per_page);
 
-    // Fetch all orders
-    $orders = fetchOrders($conn);
+// Fetch total number of orders for pagination
+$total_query = "SELECT COUNT(orderid) AS total FROM orders";
+$total_result = $conn->query($total_query);
+$total_orders = $total_result->fetch_assoc()['total'];
+$total_pages = ceil($total_orders / $orders_per_page);
+
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -93,35 +112,36 @@
         .export-buttons button:hover {
             background-color: #0056b3;
         }
-        <style>
-    .order-table select {
-        padding: 5px;
-        border-radius: 4px;
-        border: 1px solid #ddd;
-        font-size: 14px;
-    }
 
-    .order-table button.update-btn {
-        background-color: #28a745;
-        color: white;
-        padding: 5px 10px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: background-color 0.3s;
-    }
+        /* Pagination styling */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
 
-    .order-table button.update-btn:hover {
-        background-color: #218838;
-    }
+        .pagination a {
+            color: #007bff;
+            padding: 10px 15px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            margin: 0 5px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
 
-    .order-table td:last-child {
-        text-align: center;
-    }
+        .pagination a:hover {
+            background-color: #f1f1f1;
+        }
 
-    /* Popup styling */
-    .popup {
+        .pagination a.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        /* Popup styling */
+        .popup {
             display: none;
             position: fixed;
             left: 50%;
@@ -147,8 +167,6 @@
         .popup button:hover {
             background-color: #0056b3;
         }
-</style>
-
     </style>
 </head>
 <body>
@@ -193,19 +211,19 @@
                 <tbody>
                     <?php foreach ($orders as $order): ?>
                         <tr>
-                            <td><?php echo $order['orderid']; ?></td>
-                            <td><?php echo $order['userid']; ?></td>
-                            <td><?php echo $order['name']; ?></td>
-                            <td><?php echo $order['pid']; ?></td>
-                            <td><?php echo $order['pname']; ?></td>
-                            <td><img src="<?php echo $order['pimage']; ?>" alt="Product Image" width="50"></td>
-                            <td><?php echo $order['price']; ?></td>
-                            <td><?php echo $order['quantity']; ?></td>
-                            <td><?php echo $order['totalprice']; ?></td>
+                            <td><?php echo htmlspecialchars($order['orderid']); ?></td>
+                            <td><?php echo htmlspecialchars($order['userid']); ?></td>
+                            <td><?php echo htmlspecialchars($order['name']); ?></td>
+                            <td><?php echo htmlspecialchars($order['pid']); ?></td>
+                            <td><?php echo htmlspecialchars($order['pname']); ?></td>
+                            <td><img src="<?php echo htmlspecialchars($order['pimage']); ?>" alt="Product Image" width="50"></td>
+                            <td><?php echo htmlspecialchars($order['price']); ?></td>
+                            <td><?php echo htmlspecialchars($order['quantity']); ?></td>
+                            <td><?php echo htmlspecialchars($order['totalprice']); ?></td>
                             <td>
                                 <form id="status-form-<?php echo $order['orderid']; ?>" class="status-form" action="update_status.php" method="POST">
-                                    <input type="hidden" name="order_id" value="<?php echo $order['orderid']; ?>">
-                                    <select name="status">
+                                    <input type="hidden" name="order_id" value="<?php echo htmlspecialchars($order['orderid']); ?>">
+                                    <select name="status" onchange="this.form.submit()">
                                         <option value="Order Placed" <?php echo $order['status'] === 'Order Placed' ? 'selected' : ''; ?>>Order Placed</option>
                                         <option value="Shipping" <?php echo $order['status'] === 'Shipping' ? 'selected' : ''; ?>>Shipping</option>
                                         <option value="Delivered" <?php echo $order['status'] === 'Delivered' ? 'selected' : ''; ?>>Delivered</option>
@@ -219,6 +237,21 @@
                     <?php endforeach; ?>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <?php if ($page > 1): ?>
+                <a href="orders.php?page=<?php echo $page - 1; ?>">&laquo; Prev</a>
+            <?php endif; ?>
+            
+            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                <a href="orders.php?page=<?php echo $i; ?>" class="<?php echo $page == $i ? 'active' : ''; ?>"><?php echo $i; ?></a>
+            <?php endfor; ?>
+            
+            <?php if ($page < $total_pages): ?>
+                <a href="orders.php?page=<?php echo $page + 1; ?>">Next &raquo;</a>
+            <?php endif; ?>
         </div>
 
         <!-- Buttons for Exporting -->
@@ -272,7 +305,3 @@
     </script>
 </body>
 </html>
-
-<?php
-    $conn->close();
-?>

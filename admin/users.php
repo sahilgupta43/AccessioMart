@@ -1,21 +1,41 @@
 <?php
-    // Include database connection and start session
-    include('include/connectdb.php');
+// Include database connection
+include('include/connectdb.php');
 
-    // Function to fetch all orders from database
-    function fetchUsers($conn) {
-        $selectQuery = "SELECT userid, name, email, phone FROM customers";
-        $result = $conn->query($selectQuery);
+// Define the number of users per page
+$users_per_page = 10; // Adjust this number as needed
 
-        if ($result->num_rows > 0) {
-            return $result->fetch_all(MYSQLI_ASSOC);
-        } else {
-            return [];
-        }
+// Determine the current page number
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
+
+// Calculate the starting record for the current page
+$start_from = ($page - 1) * $users_per_page;
+
+// Function to fetch users from the database for the current page
+function fetchUsers($conn, $start_from, $users_per_page) {
+    $selectQuery = "SELECT userid, name, email, phone FROM customers LIMIT ?, ?";
+    $stmt = $conn->prepare($selectQuery);
+    $stmt->bind_param("ii", $start_from, $users_per_page);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        return $result->fetch_all(MYSQLI_ASSOC);
+    } else {
+        return [];
     }
+}
 
-    // Fetch all orders
-    $users = fetchUsers($conn);
+// Fetch users for the current page
+$users = fetchUsers($conn, $start_from, $users_per_page);
+
+// Fetch total number of users for pagination
+$total_query = "SELECT COUNT(userid) AS total FROM customers";
+$total_result = $conn->query($total_query);
+$total_users = $total_result->fetch_assoc()['total'];
+$total_pages = ceil($total_users / $users_per_page);
+
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -25,7 +45,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Users</title>
     <link rel="stylesheet" href="css/styles.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
         .main-content {
             margin-left: 250px; 
@@ -72,6 +91,31 @@
             text-align: center;
         }
 
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .pagination a {
+            color: #007bff;
+            padding: 10px 15px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            margin: 0 5px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .pagination a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .pagination a.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
     </style>
 </head>
 <body>
@@ -107,21 +151,38 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($users as $user): ?>
+                    <?php if (!empty($users)): ?>
+                        <?php foreach ($users as $user): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($user['userid']); ?></td>
+                                <td><?php echo htmlspecialchars($user['name']); ?></td>
+                                <td><?php echo htmlspecialchars($user['email']); ?></td>
+                                <td><?php echo htmlspecialchars($user['phone']); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
                         <tr>
-                            <td><?php echo $user['userid']; ?></td>
-                            <td><?php echo $user['name']; ?></td>
-                            <td><?php echo $user['email']; ?></td>
-                            <td><?php echo $user['phone']; ?></td>
+                            <td colspan="4">No users found.</td>
                         </tr>
-                    <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
-        </div>
 
+            <!-- Pagination -->
+            <div class="pagination">
+                <?php if ($page > 1): ?>
+                    <a href="users.php?page=<?php echo $page - 1; ?>">&laquo; Prev</a>
+                <?php endif; ?>
+                
+                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                    <a href="users.php?page=<?php echo $i; ?>" class="<?php echo $page == $i ? 'active' : ''; ?>"><?php echo $i; ?></a>
+                <?php endfor; ?>
+                
+                <?php if ($page < $total_pages): ?>
+                    <a href="users.php?page=<?php echo $page + 1; ?>">Next &raquo;</a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
-
-<?php
-    $conn->close();
-?>

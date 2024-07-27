@@ -5,9 +5,24 @@ session_start(); // Start or resume the session
 include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 include('include/without.php');
 
-// SQL query to fetch products from database
-$sql = "SELECT pid, pname, price, pimage FROM products";
-$result = $conn->query($sql);
+// Pagination settings
+$items_per_page = 10; // Number of products per page
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1; // Current page
+$offset = ($page - 1) * $items_per_page; // Offset for SQL query
+
+// SQL query to count total number of products
+$total_query = "SELECT COUNT(*) AS total FROM products";
+$total_result = $conn->query($total_query);
+$total_row = $total_result->fetch_assoc();
+$total_items = $total_row['total'];
+$total_pages = ceil($total_items / $items_per_page);
+
+// SQL query to fetch products with pagination
+$sql = "SELECT pid, pname, price, pimage FROM products LIMIT ? OFFSET ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("ii", $items_per_page, $offset);
+$stmt->execute();
+$result = $stmt->get_result();
 
 // Array to store fetched products
 $products = array();
@@ -36,7 +51,7 @@ function addToCart($productId) {
         $cartKey = 'cart_' . $userId; // Create a unique cart key for the user
 
         // Initialize the user's cart if not already set
-        if (isset($_SESSION[$cartKey])) {
+        if (!isset($_SESSION[$cartKey])) {
             $_SESSION[$cartKey] = array();
         }
 
@@ -58,7 +73,6 @@ function addToCart($productId) {
         exit();
     }
 }
-
 
 // Function to get product details by ID
 function getProductById($productId) {
@@ -89,6 +103,7 @@ if (isset($_GET['add_to_wishlist'])) {
 }
 
 // Close database connection
+$stmt->close();
 $conn->close();
 ?>
 <!DOCTYPE html>
@@ -142,6 +157,28 @@ $conn->close();
             background-color: #007bff;
             color: white;
         }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .pagination a {
+            margin: 0 5px;
+            padding: 10px 15px;
+            border: 1px solid #007bff;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #007bff;
+            font-size: 14px;
+        }
+        .pagination a.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .pagination a:hover {
+            background-color: #0056b3;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -164,6 +201,21 @@ $conn->close();
         </form>
     </div>
     <?php endforeach; ?>
+</div>
+
+<!-- Pagination Links -->
+<div class="pagination">
+    <?php if ($page > 1): ?>
+        <a href="?page=<?php echo ($page - 1); ?>">Previous</a>
+    <?php endif; ?>
+
+    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+        <a href="?page=<?php echo $i; ?>" class="<?php echo ($i == $page) ? 'active' : ''; ?>"><?php echo $i; ?></a>
+    <?php endfor; ?>
+
+    <?php if ($page < $total_pages): ?>
+        <a href="?page=<?php echo ($page + 1); ?>">Next</a>
+    <?php endif; ?>
 </div>
 
 <?php include('include/footer.php') ?>

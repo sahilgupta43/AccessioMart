@@ -18,6 +18,11 @@ include('include/without.php');
 
 $userID = $_SESSION['userid']; // Get user ID from session
 
+// Pagination settings
+$items_per_page = 10; // Number of items per page
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1; // Current page
+$offset = ($page - 1) * $items_per_page; // Offset for SQL query
+
 // SQL query to select user data
 $sql = "SELECT userid, name, email, phone FROM customers WHERE userid = ?";
 $stmt = $conn->prepare($sql);
@@ -30,16 +35,17 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 $stmt->close();
 
-// SQL query to fetch user orders
+// SQL query to fetch user orders with pagination
 $orderSql = "SELECT o.orderid, o.pid, p.pname, o.pimage, o.quantity, o.price, o.totalprice, o.status
              FROM orders o
              JOIN products p ON o.pid = p.pid
-             WHERE o.userid = ?";
+             WHERE o.userid = ?
+             LIMIT ?, ?";
 $orderStmt = $conn->prepare($orderSql);
 if (!$orderStmt) {
     die("Prepare failed: " . $conn->error);
 }
-$orderStmt->bind_param("i", $userID);
+$orderStmt->bind_param("iii", $userID, $offset, $items_per_page);
 $orderStmt->execute();
 $orderResult = $orderStmt->get_result();
 
@@ -48,6 +54,19 @@ if ($orderResult->num_rows > 0) {
 } else {
     $orders = [];
 }
+
+// Get total number of orders for pagination
+$totalOrdersSql = "SELECT COUNT(*) as total FROM orders WHERE userid = ?";
+$totalOrdersStmt = $conn->prepare($totalOrdersSql);
+if (!$totalOrdersStmt) {
+    die("Prepare failed: " . $conn->error);
+}
+$totalOrdersStmt->bind_param("i", $userID);
+$totalOrdersStmt->execute();
+$totalOrdersResult = $totalOrdersStmt->get_result();
+$totalOrders = $totalOrdersResult->fetch_assoc()['total'];
+$totalPages = ceil($totalOrders / $items_per_page);
+
 $orderStmt->close();
 $conn->close();
 ?>
@@ -243,6 +262,31 @@ $conn->close();
             background-color: #f8d7da;
             border: 1px solid #f5c6cb;
         }
+
+        .pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            color: #007bff;
+            padding: 8px 16px;
+            text-decoration: none;
+            border: 1px solid #007bff;
+            border-radius: 5px;
+            margin: 0 2px;
+        }
+
+        .pagination a.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .pagination a:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
     </style>
     <script>
         function showSection(sectionId) {
@@ -295,8 +339,6 @@ $conn->close();
             };
             xhr.send('current_password=' + encodeURIComponent(currentPassword) + '&new_password=' + encodeURIComponent(newPassword));
         }
-
-        
     </script>
 </head>
 <body>
@@ -361,6 +403,21 @@ $conn->close();
                     </tr>
                 <?php endforeach; ?>
             </table>
+
+            <!-- Pagination Controls -->
+            <div class="pagination">
+                <?php if ($page > 1): ?>
+                    <a href="?page=<?php echo $page - 1; ?>">&laquo; Previous</a>
+                <?php endif; ?>
+
+                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                    <a href="?page=<?php echo $i; ?>" class="<?php echo ($i == $page) ? 'active' : ''; ?>"><?php echo $i; ?></a>
+                <?php endfor; ?>
+
+                <?php if ($page < $totalPages): ?>
+                    <a href="?page=<?php echo $page + 1; ?>">Next &raquo;</a>
+                <?php endif; ?>
+            </div>
         <?php else: ?>
             <p>No orders found.</p>
         <?php endif; ?>

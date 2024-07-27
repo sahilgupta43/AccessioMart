@@ -1,6 +1,15 @@
 <?php
 include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
 
+// Define the number of products per page
+$products_per_page = 2;
+
+// Determine the current page number
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
+
+// Calculate the starting record for the current page
+$start_from = ($page - 1) * $products_per_page;
+
 // Fetch all categories from the database for the dropdown
 $categoriesQuery = "SELECT cid, category_name FROM categories";
 $categoriesResult = $conn->query($categoriesQuery);
@@ -94,12 +103,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
     }
 }
 
-// Fetch products for display
-$selectQuery = "SELECT pid, pname, pimage, price, description, category_name, p.cid FROM products p JOIN categories c ON p.cid = c.cid";
-$result = $conn->query($selectQuery);
+// Fetch products for the current page
+$selectQuery = "SELECT pid, pname, pimage, price, description, category_name, p.cid 
+                 FROM products p 
+                 JOIN categories c ON p.cid = c.cid 
+                 LIMIT ?, ?";
+$stmt = $conn->prepare($selectQuery);
+$stmt->bind_param("ii", $start_from, $products_per_page);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Fetch total number of products for pagination
+$total_query = "SELECT COUNT(pid) AS total FROM products";
+$total_result = $conn->query($total_query);
+$total_products = $total_result->fetch_assoc()['total'];
+$total_pages = ceil($total_products / $products_per_page);
 
 $conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -263,6 +285,31 @@ $conn->close();
         .modal-content button[type="submit"]:hover {
             background-color: #45a049;
         }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .pagination a {
+            color: #007bff;
+            padding: 10px 15px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            margin: 0 5px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .pagination a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .pagination a.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
     </style>
 </head>
 <body>
@@ -350,6 +397,20 @@ $conn->close();
                 ?>
             </tbody>
         </table>
+         <!-- Pagination -->
+         <div class="pagination">
+                <?php if ($page > 1): ?>
+                    <a href="products.php?page=<?php echo $page - 1; ?>">&laquo; Prev</a>
+                <?php endif; ?>
+                
+                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                    <a href="products.php?page=<?php echo $i; ?>" class="<?php echo $page == $i ? 'active' : ''; ?>"><?php echo $i; ?></a>
+                <?php endfor; ?>
+                
+                <?php if ($page < $total_pages): ?>
+                    <a href="products.php?page=<?php echo $page + 1; ?>">Next &raquo;</a>
+                <?php endif; ?>
+            </div>
     </div>
 
     <div class="modal" id="editModal">

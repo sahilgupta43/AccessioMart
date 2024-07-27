@@ -1,21 +1,41 @@
 <?php
-    // Include database connection and start session
-    include('include/connectdb.php');
+// Include database connection
+include('include/connectdb.php');
 
-    // Function to fetch all orders from database
-    function fetchUsers($conn) {
-        $selectQuery = "SELECT id, name, email, feedback FROM feedback";
-        $result = $conn->query($selectQuery);
+// Define the number of feedback entries per page
+$feedback_per_page = 10; // Adjust this number as needed
 
-        if ($result->num_rows > 0) {
-            return $result->fetch_all(MYSQLI_ASSOC);
-        } else {
-            return [];
-        }
+// Determine the current page number
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
+
+// Calculate the starting record for the current page
+$start_from = ($page - 1) * $feedback_per_page;
+
+// Function to fetch feedback from the database for the current page
+function fetchFeedback($conn, $start_from, $feedback_per_page) {
+    $selectQuery = "SELECT id, name, email, feedback FROM feedback LIMIT ?, ?";
+    $stmt = $conn->prepare($selectQuery);
+    $stmt->bind_param("ii", $start_from, $feedback_per_page);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        return $result->fetch_all(MYSQLI_ASSOC);
+    } else {
+        return [];
     }
+}
 
-    // Fetch all users
-    $users = fetchUsers($conn);
+// Fetch feedback for the current page
+$users = fetchFeedback($conn, $start_from, $feedback_per_page);
+
+// Fetch total number of feedback entries for pagination
+$total_query = "SELECT COUNT(id) AS total FROM feedback";
+$total_result = $conn->query($total_query);
+$total_feedback = $total_result->fetch_assoc()['total'];
+$total_pages = ceil($total_feedback / $feedback_per_page);
+
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -61,17 +81,32 @@
             background-color: #f9f9f9;
         }
 
-        .user-table td img {
-            max-width: 50px;
-            height: auto;
-            display: block;
-            margin: 0 auto;
+        /* Pagination styling */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
         }
 
-        .user-table td:last-child {
-            text-align: center;
+        .pagination a {
+            color: #007bff;
+            padding: 10px 15px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            margin: 0 5px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
         }
 
+        .pagination a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .pagination a.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
     </style>
 </head>
 <body>
@@ -95,7 +130,7 @@
     <div class="main-content">
         <h2>User's Feedback</h2>
 
-        <!-- Users Table -->
+        <!-- Feedback Table -->
         <div class="users-table">
             <table id="userTable" class="user-table">
                 <thead>
@@ -109,19 +144,30 @@
                 <tbody>
                     <?php foreach ($users as $user): ?>
                         <tr>
-                            <td><?php echo $user['id']; ?></td>
-                            <td><?php echo $user['name']; ?></td>
-                            <td><?php echo $user['email']; ?></td>
-                            <td><?php echo $user['feedback']; ?></td>
+                            <td><?php echo htmlspecialchars($user['id']); ?></td>
+                            <td><?php echo htmlspecialchars($user['name']); ?></td>
+                            <td><?php echo htmlspecialchars($user['email']); ?></td>
+                            <td><?php echo htmlspecialchars($user['feedback']); ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
 
+        <!-- Pagination -->
+        <div class="pagination">
+            <?php if ($page > 1): ?>
+                <a href="feedback.php?page=<?php echo $page - 1; ?>">&laquo; Prev</a>
+            <?php endif; ?>
+            
+            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                <a href="feedback.php?page=<?php echo $i; ?>" class="<?php echo $page == $i ? 'active' : ''; ?>"><?php echo $i; ?></a>
+            <?php endfor; ?>
+            
+            <?php if ($page < $total_pages): ?>
+                <a href="feedback.php?page=<?php echo $page + 1; ?>">Next &raquo;</a>
+            <?php endif; ?>
+        </div>
+    </div>
 </body>
 </html>
-
-<?php
-    $conn->close();
-?>

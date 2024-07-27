@@ -1,6 +1,15 @@
 <?php
 include('include/connectdb.php');
 
+// Define the number of results per page
+$results_per_page = 1;
+
+// Determine the current page number
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
+
+// Calculate the starting record for the current page
+$start_from = ($page - 1) * $results_per_page;
+
 // Process form submission if category is added
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     $categoryName = trim($_POST['categoryName']);
@@ -98,9 +107,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     }
 }
 
-// Fetch all categories from database
-$selectQuery = "SELECT cid, category_name, category_image FROM categories";
-$result = $conn->query($selectQuery);
+// Fetch all categories for the current page
+$selectQuery = "SELECT cid, category_name, category_image FROM categories LIMIT ?, ?";
+$stmt = $conn->prepare($selectQuery);
+$stmt->bind_param("ii", $start_from, $results_per_page);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Fetch total number of categories for pagination
+$total_query = "SELECT COUNT(cid) AS total FROM categories";
+$total_result = $conn->query($total_query);
+$total_categories = $total_result->fetch_assoc()['total'];
+$total_pages = ceil($total_categories / $results_per_page);
 
 // Close database connection
 $conn->close();
@@ -197,6 +215,32 @@ $conn->close();
             text-decoration: underline;
             color: #0056b3;
         }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .pagination a {
+            color: #007bff;
+            padding: 10px 15px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            margin: 0 5px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .pagination a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .pagination a.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
     </style>
 </head>
 <body>
@@ -255,6 +299,20 @@ $conn->close();
                     ?>
                 </tbody>
             </table>
+            <!-- Pagination -->
+            <div class="pagination">
+                <?php if ($page > 1): ?>
+                    <a href="categories.php?page=<?php echo $page - 1; ?>">&laquo; Prev</a>
+                <?php endif; ?>
+                
+                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                    <a href="categories.php?page=<?php echo $i; ?>" class="<?php echo $page == $i ? 'active' : ''; ?>"><?php echo $i; ?></a>
+                <?php endfor; ?>
+                
+                <?php if ($page < $total_pages): ?>
+                    <a href="categories.php?page=<?php echo $page + 1; ?>">Next &raquo;</a>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
 

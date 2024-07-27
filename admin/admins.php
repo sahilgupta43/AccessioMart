@@ -1,71 +1,73 @@
 <?php
-    // Include database connection and start session
-    include('include/connectdb.php');
+// Include database connection and start session
+include('include/connectdb.php');
 
-    // Function to fetch all admins from database
-    function fetchAdmins($conn) {
-        $selectQuery = "SELECT id, fname, username, password FROM admintbl";
-        $result = $conn->query($selectQuery);
+// Define the number of results per page
+$results_per_page = 5;
 
-        if ($result->num_rows > 0) {
-            return $result->fetch_all(MYSQLI_ASSOC);
-        } else {
-            return [];
-        }
+// Determine the current page number
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
+
+// Calculate the starting record for the current page
+$start_from = ($page - 1) * $results_per_page;
+
+// Function to fetch admins for the current page from the database
+function fetchAdmins($conn, $start_from, $results_per_page) {
+    $selectQuery = "SELECT id, fname, username, password FROM admintbl LIMIT ?, ?";
+    $stmt = $conn->prepare($selectQuery);
+    $stmt->bind_param("ii", $start_from, $results_per_page);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        return $result->fetch_all(MYSQLI_ASSOC);
+    } else {
+        return [];
     }
+}
 
-    // Function to add a new admin to the database
-    function addAdmin($conn, $fname, $username, $password) {
-        $hashed_password = hash('sha256', $password); // Hash the password for storage
+// Fetch the total number of admins for pagination
+$total_query = "SELECT COUNT(id) AS total FROM admintbl";
+$total_result = $conn->query($total_query);
+$total_admins = $total_result->fetch_assoc()['total'];
+$total_pages = ceil($total_admins / $results_per_page);
 
-        // Prepare and execute insert query
-        $insertQuery = "INSERT INTO admintbl (fname, username, password) VALUES (?, ?, ?)";
-        $stmt = $conn->prepare($insertQuery);
-        $stmt->bind_param("sss", $fname, $username, $hashed_password);
+// Fetch admins for the current page
+$admins = fetchAdmins($conn, $start_from, $results_per_page);
+
+// Process AJAX request to delete admin
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
+    if ($_POST['action'] == 'delete_admin' && isset($_POST['adminId']) && is_numeric($_POST['adminId'])) {
+        $adminId = $_POST['adminId'];
+
+        // Delete admin from database
+        $deleteQuery = "DELETE FROM admintbl WHERE id = ?";
+        $stmt = $conn->prepare($deleteQuery);
+        $stmt->bind_param("i", $adminId);
 
         if ($stmt->execute()) {
-            return true;
+            echo json_encode(['status' => 'success']);
+            exit;
         } else {
-            return false;
+            echo json_encode(['status' => 'error', 'message' => 'Failed to delete admin']);
+            exit;
+        }
+    } elseif ($_POST['action'] == 'add_admin') {
+        // Validate and sanitize input
+        $fname = $_POST['fname'];
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+
+        // Add new admin to database
+        if (addAdmin($conn, $fname, $username, $password)) {
+            echo json_encode(['status' => 'success']);
+            exit;
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Failed to add admin']);
+            exit;
         }
     }
-
-    // Process AJAX request to delete admin
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
-        if ($_POST['action'] == 'delete_admin' && isset($_POST['adminId']) && is_numeric($_POST['adminId'])) {
-            $adminId = $_POST['adminId'];
-
-            // Delete admin from database
-            $deleteQuery = "DELETE FROM admintbl WHERE id = ?";
-            $stmt = $conn->prepare($deleteQuery);
-            $stmt->bind_param("i", $adminId);
-
-            if ($stmt->execute()) {
-                echo json_encode(['status' => 'success']);
-                exit;
-            } else {
-                echo json_encode(['status' => 'error', 'message' => 'Failed to delete admin']);
-                exit;
-            }
-        } elseif ($_POST['action'] == 'add_admin') {
-            // Validate and sanitize input
-            $fname = $_POST['fname'];
-            $username = $_POST['username'];
-            $password = $_POST['password'];
-
-            // Add new admin to database
-            if (addAdmin($conn, $fname, $username, $password)) {
-                echo json_encode(['status' => 'success']);
-                exit;
-            } else {
-                echo json_encode(['status' => 'error', 'message' => 'Failed to add admin']);
-                exit;
-            }
-        }
-    }
-
-    // Fetch all admins
-    $admins = fetchAdmins($conn);
+}
 ?>
 
 <!DOCTYPE html>
@@ -78,13 +80,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
         .main-content {
-            margin-left: 250px; /* Adjust based on your sidebar width */
+            margin-left: 250px;
             padding: 20px;
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
         }
 
-        /* Add Admin form styling */
         .add-admin-form {
             max-width: 600px;
             margin: 20px 0;
@@ -130,7 +131,6 @@
             background-color: #218838;
         }
 
-        /* Admin table styling */
         .admin-table {
             width: 100%;
             border-collapse: collapse;
@@ -176,11 +176,37 @@
             background-color: #c82333;
         }
 
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .pagination a {
+            color: #007bff;
+            padding: 10px 15px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            margin: 0 5px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .pagination a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .pagination a.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
     </style>
 </head>
 <body>
     <div class="sidebar">
-    <div class="sidebar-header">
+        <div class="sidebar-header">
             <h2>Admin Portal</h2>
         </div>
         <ul class="nav-links">
@@ -241,6 +267,21 @@
                     <?php endforeach; ?>
                 </tbody>
             </table>
+        </div>
+        
+        <!-- Pagination -->
+        <div class="pagination">
+            <?php if ($page > 1): ?>
+                <a href="admins.php?page=<?php echo $page - 1; ?>">&laquo; Prev</a>
+            <?php endif; ?>
+            
+            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                <a href="admins.php?page=<?php echo $i; ?>" class="<?php echo $page == $i ? 'active' : ''; ?>"><?php echo $i; ?></a>
+            <?php endfor; ?>
+            
+            <?php if ($page < $total_pages): ?>
+                <a href="admins.php?page=<?php echo $page + 1; ?>">Next &raquo;</a>
+            <?php endif; ?>
         </div>
     </div>
 

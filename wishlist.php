@@ -1,11 +1,16 @@
 <?php
 session_start(); // Start or resume the session
 
-include ('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
-include ('include/without.php');
+include('C:\xampp\htdocs\accessiomart\admin\include\connectdb.php');
+include('include/without.php');
 
-// Fetch products from the database to display details in the wishlist
-$sql = "SELECT pid, pimage , pname, price FROM products";
+// Pagination settings
+$items_per_page = 10; // Number of items per page
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1; // Current page
+$offset = ($page - 1) * $items_per_page; // Offset for SQL query
+
+// Fetch products from the database
+$sql = "SELECT pid, pimage, pname, price FROM products";
 $result = $conn->query($sql);
 
 // Array to store fetched products
@@ -18,17 +23,26 @@ if ($result->num_rows > 0) {
     }
 }
 
-// Function to display wishlist items
+// Function to display wishlist items with pagination
 function displayWishlist()
 {
     global $products;
+    global $page;
+    global $items_per_page;
+
     echo "<h2 style='text-align: center;'>Your Wishlist</h2>";
 
     if (isset($_SESSION['wishlist']) && !empty($_SESSION['wishlist'])) {
+        $wishlist_items = $_SESSION['wishlist'];
+        $total_items = count($wishlist_items);
+        $total_pages = ceil($total_items / $items_per_page);
+        $start = ($page - 1) * $items_per_page;
+        $paged_wishlist_items = array_slice($wishlist_items, $start, $items_per_page, true);
+
         echo "<table style='width: 100%; border-collapse: collapse; margin: 0 auto;'>";
         echo "<tr><th>Product Image</th><th>Name</th><th>Price</th><th>Action</th></tr>";
 
-        foreach ($_SESSION['wishlist'] as $productId => $value) {
+        foreach ($paged_wishlist_items as $productId => $value) {
             foreach ($products as $product) {
                 if ($product['pid'] == $productId) {
                     echo "<tr>";
@@ -46,6 +60,22 @@ function displayWishlist()
         }
 
         echo "</table>";
+
+        // Pagination links
+        echo "<div style='text-align: center; margin-top: 20px;'>";
+        if ($page > 1) {
+            echo "<a href='wishlist.php?page=" . ($page - 1) . "' class='button'>Previous</a> ";
+        }
+
+        for ($i = 1; $i <= $total_pages; $i++) {
+            $active = ($i == $page) ? "style='background-color: #555; color: #fff;'" : "";
+            echo "<a href='wishlist.php?page=$i' class='button' $active>$i</a> ";
+        }
+
+        if ($page < $total_pages) {
+            echo "<a href='wishlist.php?page=" . ($page + 1) . "' class='button'>Next</a>";
+        }
+        echo "</div>";
     } else {
         echo "<p style='text-align: center;'>Your wishlist is empty.</p>";
         echo "<div style='text-align: center;'>";
@@ -102,6 +132,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_from_wishlist'
             color: white;
             border: none;
             cursor: pointer;
+            text-decoration: none;
+            margin: 2px;
+        }
+
+        .button:hover {
+            background-color: #d32f2f;
+        }
+
+        .button:active {
+            background-color: #c62828;
         }
     </style>
 </head>
@@ -109,7 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_from_wishlist'
 <body>
 
     <?php displayWishlist(); ?>
-    <?php include ('include/footer.php') ?>
+    <?php include('include/footer.php') ?>
 </body>
 
 </html>
